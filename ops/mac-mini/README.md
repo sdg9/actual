@@ -102,3 +102,23 @@ until this user authorization step is completed.
   empty account list. No real financial data was changed.
 - Repository-wide typecheck attempted but unavailable: clone has no installed Yarn
   dependency state. No application TypeScript was modified.
+
+## Household migration — 2026-10-13
+
+Imported S&S Household using Actual 26.10.0's built-in YNAB importer.
+Sync ID: `dc93cca8-ef34-44ba-a558-fa51cb5de59d`. Bank Sync Trial remains separate;
+MCP's default remains the trial budget until deliberately changed.
+
+Verified against the private source export: 102 account balances, 22,031
+transactions (per-account count and date/amount/cleared/reconciled multisets),
+and 19,140 monthly category assignments across 136 YNAB months all match.
+Transaction dates span 2015-08-07 through 2026-10-12. A fresh independent API
+cache downloaded the uploaded budget and verified balances/monthly assignments.
+Hidden category/group names acquire `(hidden)` suffixes in the API's budget view.
+Credit Card Payments and internal YNAB categories are excluded by the upstream
+importer; category availability and To Budget have not been reconciled.
+
+Private source JSON, Actual ZIP, and comparison reports live on the MacBook in
+`~/.config/actual-budget/migration/`, outside git. Mini copies and import/verify
+logs live in `~/services/actual/migration/`. Server backups were taken before
+and after import. YNAB was read only; no bank linking or transaction edits done.

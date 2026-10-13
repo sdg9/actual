@@ -14,6 +14,9 @@ verify: ssh mini 'curl -fsS http://127.0.0.1:5006/health'
 - Cloudflare application and household policy sessions set to one month.
 - Private MCP 0.22.31 over Tailscale SSH: reads/writes and read-only profile verified.
 
+- Imported S&S Household: 22,031 transactions since 2015-08-07, 102 accounts, 136 YNAB months.
+- Fresh server download verified: all balances, transaction counts/date/amount/clearance, and 19,140 comparable monthly assignments match.
+
 ## Delivered
 - Running on Mac Mini at `~/services/actual`; app available through local SSH forwarding.
 - Setup and client configuration: [deployment runbook](../../ops/mac-mini/README.md).
@@ -25,7 +28,7 @@ verify: ssh mini 'curl -fsS http://127.0.0.1:5006/health'
 
 ## Next actions
 1. Connect SimpleFIN in Bank Sync Trial.
-2. Verify real bank imports and next-day refresh; then migrate household budget if desired.
+2. Review imported household category availability/credit-card handling; verify bank imports and next-day refresh.
 3. Add off-device backups; connect receipts database and schedule review job separately.
 
 ## Limits
