@@ -19,16 +19,17 @@ Custom patches need a separately built image and a deliberate compose update.
 The DNS route and tunnel are live. Cloudflare Access application
 `11cf3f77-0c93-4bef-a570-3338faa1dc31` protects the entire hostname. Its only
 policy is Allow, matching the two exact emails above (policy
-`e195f031-471b-4e6f-aefc-d9a768ad2fdb`), with a 24-hour application session.
+`e195f031-471b-4e6f-aefc-d9a768ad2fdb`), with a one-month application session and explicit one-month policy override.
 The saved policy was verified in Steven's personal Chrome profile.
 Unauthenticated HTTPS requests redirect to the existing organization's
 `webtownhero.cloudflareaccess.com` email-code sign-in page. This team domain
 is used by the personal Cloudflare account; it does not broaden the allowlist.
 
 `com.steven.actual.tunnel` is installed and running on the Mini, with four
-registered QUIC connections verified. Completing an email-code login and
-checking Actual through this public route remains outstanding; local Actual
-health is UP. Policy evidence: [screenshot](evidence/cloudflare-access-policy.png).
+registered QUIC connections verified. Authenticated public access is verified: Actual displayed the Bank Sync Trial
+budget file and Server online at the HTTPS URL. Local Actual health is UP.
+New Access sessions last one month; existing cookies may retain their previous
+expiry. Clearing cookies or using another browser requires signing in again. Policy evidence: [screenshot](evidence/cloudflare-access-policy.png).
 
 ## Operations
 
