@@ -1,0 +1,6 @@
+tunnel: d8226a7b-d5b8-4826-b36e-84d92a1bd7a8
+credentials-file: /Users/steven/.cloudflared/d8226a7b-d5b8-4826-b36e-84d92a1bd7a8.json
+ingress:
+  - hostname: budget.stevengoff.dev
+    service: http://127.0.0.1:5006
+  - service: http_status:404

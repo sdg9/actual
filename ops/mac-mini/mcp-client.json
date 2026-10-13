@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "actual-budget": {
+      "command": "ssh",
+      "args": [
+        "-T",
+        "-o", "BatchMode=yes",
+        "steven@100.89.165.109",
+        "/Users/steven/services/actual/mcp.sh"
+      ]
+    }
+  }
+}
