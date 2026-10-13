@@ -15,14 +15,15 @@ verify: ssh mini 'curl -fsS http://127.0.0.1:5006/health'
 ## Delivered
 - Running on Mac Mini at `~/services/actual`; app available through local SSH forwarding.
 - Setup and client configuration: [deployment runbook](../../ops/mac-mini/README.md).
-- Cloudflare DNS route created; tunnel config ready but tunnel not started.
+- Public URL https://budget.stevengoff.dev protected by saved two-email Access policy.
+- Mini tunnel running (four QUIC connections); unauthenticated HTTPS redirects to Access.
 
 ## Needs Steven
-- Sign in to personal Cloudflare dashboard: existing credentials cannot create Access policy (403).
+- Complete email-code login at the public budget URL for authenticated end-to-end verification.
 - SimpleFIN subscription/bank authorization and one-use setup token entered in Actual.
 
 ## Next actions
-1. Create two-email Cloudflare Access policy, start tunnel, verify external access control.
+1. Verify Actual loads after Cloudflare email-code login; public protection already verified.
 2. Verify real bank imports and next-day refresh; then migrate household budget if desired.
 3. Add off-device backups; connect receipts database and schedule review job separately.
 

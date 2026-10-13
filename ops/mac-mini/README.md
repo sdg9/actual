@@ -9,19 +9,26 @@ Custom patches need a separately built image and a deliberate compose update.
 - Mini: `/Users/steven/services/actual`
 - Data: `data/` (SQLite databases and synchronized budget files)
 - Web: `127.0.0.1:5006` on the Mini; never exposed directly on the LAN
-- Intended public URL: `https://budget.stevengoff.dev`
+- Public URL: `https://budget.stevengoff.dev`
 - Cloudflare tunnel: `mac-mini-actual`, ID `d8226a7b-d5b8-4826-b36e-84d92a1bd7a8`
 - Tunnel credentials: Mini's `~/.cloudflared/`, outside this repository
 - Access policy required: only `steveng9@gmail.com` and `stephanie.r.goff@gmail.com`
 - Server password: Mini's `services/actual/server-password`, mode 600
 - Local password copy: MacBook's `~/.config/actual-budget/server-password`, mode 600
 
-The DNS route exists. **Do not start the tunnel until the Access policy is in
-place and verified.** No Access app was created by the initial CLI attempt:
-Cloudflare returned 403. Complete it in the signed-in personal-account dashboard.
-Then install `com.steven.actual.tunnel.plist` in the Mini's LaunchAgents directory
-and bootstrap it. Check an unauthenticated external request redirects to Access,
-and verify the policy's exact email allowlist.
+The DNS route and tunnel are live. Cloudflare Access application
+`11cf3f77-0c93-4bef-a570-3338faa1dc31` protects the entire hostname. Its only
+policy is Allow, matching the two exact emails above (policy
+`e195f031-471b-4e6f-aefc-d9a768ad2fdb`), with a 24-hour application session.
+The saved policy was verified in Steven's personal Chrome profile.
+Unauthenticated HTTPS requests redirect to the existing organization's
+`webtownhero.cloudflareaccess.com` email-code sign-in page. This team domain
+is used by the personal Cloudflare account; it does not broaden the allowlist.
+
+`com.steven.actual.tunnel` is installed and running on the Mini, with four
+registered QUIC connections verified. Completing an email-code login and
+checking Actual through this public route remains outstanding; local Actual
+health is UP. Policy evidence: [screenshot](evidence/cloudflare-access-policy.png).
 
 ## Operations
 
