@@ -4,6 +4,7 @@ import { Trans } from 'react-i18next';
 
 import { Button } from '@actual-app/components/button';
 import { InitialFocus } from '@actual-app/components/initial-focus';
+import { theme } from '@actual-app/components/theme';
 import { View } from '@actual-app/components/view';
 import type { IntegerAmount } from '@actual-app/core/shared/util';
 
@@ -34,7 +35,22 @@ export function HoldMenu({ onSubmit, onClose }: HoldMenuProps) {
         onClose();
       }}
     >
-      <View style={{ padding: 10 }}>
+      <View style={{ padding: 16, maxWidth: 300 }}>
+        <View style={{ fontWeight: 600, marginBottom: 8 }}>
+          <Trans>Set aside for next month</Trans>
+        </View>
+        <View
+          style={{
+            color: theme.pageTextLight,
+            lineHeight: 1.5,
+            marginBottom: 16,
+          }}
+        >
+          <Trans>
+            Move this amount out of this month’s available funds and into next
+            month’s budget. Your money stays in the same accounts.
+          </Trans>
+        </View>
         <View style={{ marginBottom: 5 }}>
           <Trans>Hold this amount:</Trans>
         </View>

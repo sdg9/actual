@@ -1,8 +1,9 @@
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 
 import { useResponsive } from '@actual-app/components/hooks/useResponsive';
 import { Select } from '@actual-app/components/select';
 import { SpaceBetween } from '@actual-app/components/space-between';
+import { theme } from '@actual-app/components/theme';
 import { View } from '@actual-app/components/view';
 import type {
   CategoryEntity,
@@ -63,7 +64,7 @@ export const PercentageAutomation = ({
         style={{ marginTop: 10 }}
       >
         <FormField style={{ flex: fieldFlex }}>
-          <FormLabel title={t('Category')} htmlFor="category-field" />
+          <FormLabel title={t('Income source')} htmlFor="category-field" />
           {isNarrowWidth ? (
             <TapField
               id="category-field"
@@ -128,7 +129,7 @@ export const PercentageAutomation = ({
         style={{ marginTop: 10 }}
       >
         <FormField style={{ flex: fieldFlex }}>
-          <FormLabel title={t('Percentage of')} htmlFor="previous-field" />
+          <FormLabel title={t('Income month')} htmlFor="previous-field" />
           <Select
             id="previous-field"
             key="previous-month"
@@ -155,6 +156,30 @@ export const PercentageAutomation = ({
         </FormField>
         {!isNarrowWidth && <View style={{ flex: 1 }} />}
       </SpaceBetween>
+      <View
+        style={{
+          marginTop: 16,
+          gap: 8,
+          color: theme.pageTextLight,
+          lineHeight: 1.5,
+        }}
+      >
+        {template.previous && (
+          <Trans>
+            Budget a month ahead: this uses income received in the month before
+            the budget month. For example, November uses October income.
+          </Trans>
+        )}
+        <Trans>
+          For a percentage of take-home pay, choose the income category used for
+          your net paycheck deposits. All income also includes other income
+          categories.
+        </Trans>
+        <Trans>
+          The amount is calculated when you apply the template. If income
+          changes, review and reapply the template to update the budget.
+        </Trans>
+      </View>
     </>
   );
 };

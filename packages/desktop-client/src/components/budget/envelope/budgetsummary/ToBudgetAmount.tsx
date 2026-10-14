@@ -79,6 +79,15 @@ export function ToBudgetAmount({
             }}
           >
             <Block
+              role="button"
+              tabIndex={0}
+              aria-label={t('Budget actions')}
+              onKeyDown={event => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  onClick();
+                }
+              }}
               onClick={onClick}
               onContextMenu={onContextMenu}
               data-cellname={sheetName}
@@ -98,6 +107,10 @@ export function ToBudgetAmount({
                       : theme.toBudgetZero,
                   marginBottom: -1,
                   borderBottom: '1px solid transparent',
+                  ':focus-visible': {
+                    outline: `2px solid ${theme.tableBorderSelected}`,
+                    outlineOffset: 3,
+                  },
                   ':hover': {
                     borderColor: isPositive
                       ? theme.toBudgetPositive
