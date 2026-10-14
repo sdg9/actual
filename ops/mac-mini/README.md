@@ -125,7 +125,7 @@ and after import. YNAB was read only; no bank linking or transaction edits done.
 
 ## Household UI deployment — 2026-10-14
 
-Live image: `actual-household-ui:dce00af72` (ARM64), image ID
+Initial UI image: `actual-household-ui:dce00af72` (ARM64), image ID
 `sha256:435a2b1342560ff2aa089fa53a1001f761afce0a6b799c7493e9c3f24a5138b9`.
 Browser source revision: `dce00af72`; base server remains pinned 26.10.0.
 Build recipe: `ui.Dockerfile`. Release context is on the Mini in
@@ -148,3 +148,24 @@ cp compose.pre-ui-20261014.yaml compose.yaml
 
 Existing browsers/PWAs may offer **Update now** or require a reload to activate
 the new cached app. Reload does not remove the local budget.
+
+## Mobile performance release — 2026-10-14
+
+Current image: `actual-household-ui:a6bcc9fc5`; source `a6bcc9fc5`.
+Image ID: `sha256:fb4be6b52efa990edfa7bb8e2a1c8f77f541a2b2ff32af990bafcb9b7ca218dc`.
+The base server and persistent data remain unchanged. Verification and timing
+results are in [the performance scope](../../docs/performance/STATUS.md).
+Release files: `~/services/actual/ui-releases/a6bcc9fc5/`.
+Verified backup: `backups/actual-20261014T054942Z.tar.gz`.
+
+To roll back only this performance release:
+
+```sh
+cd ~/services/actual
+cp compose.pre-perf-a6bcc9fc5.yaml compose.yaml
+/usr/local/bin/docker compose up -d actual
+```
+
+This restores the prior household UI image `dce00af72` without restoring or
+replacing budget data. Activate the changed bundle in existing PWAs with
+**Update now** or a reload.

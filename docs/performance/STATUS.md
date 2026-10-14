@@ -1,35 +1,34 @@
 ---
 project: Actual household mobile performance
 state: active
-milestone: Android Chrome interaction latency at 2015–present household scale
+milestone: Measured mobile responsiveness improvements deployed to Mini
 updated: 2026-10-14
-verify: yarn typecheck
+verify: ssh mini 'curl -fsS http://127.0.0.1:5006/household-build.json'
 ---
 
 ## Implemented
 
-- Reproducible isolated-copy benchmark of mobile budget/account/transaction flows.
-- Reuse downloaded route modules and number formatters.
+- Reuse downloaded route modules and bounded number formatters.
 - Render prewarmed spreadsheet values immediately; retain worker refresh/subscriptions.
 
 ## Verified
 
-- Original production baseline: 100 interaction samples, plus reload measurements.
-- Final 150-tap stress test passes 2 s threshold at 1×, 4× and 6× CPU; maximum 1.827 s.
+- 150 tap samples pass 2 s threshold at 1×, 4× and 6× CPU; maximum 1.827 s.
 - Return to budget ~20–25% faster; 4× reload ~1.9–2.0 s; 6× reload ~2.7 s.
-- Root typecheck and production build pass; formatter, loader and sheet regression tests pass.
-- 48 mobile/desktop budget workflows pass; 38 formatter/utility + 7 loader/sheet tests pass.
-- Changed-file type-aware lint and independent code review pass.
+- Root typecheck, production build, changed-file lint and independent review pass.
+- 48 mobile/desktop workflows + 38 utility + 7 loader/sheet tests pass.
+- Mini health, web revision, live household render, month navigation and sync verified.
 
 ## Delivered
 
-- Not deployed yet. Mini still runs `actual-household-ui:dce00af72`.
-- Branch `perf/mobile-household`, worktree `/Users/steven/dev/actual-ynab-ui`.
+- Mini: `actual-household-ui:a6bcc9fc5`, source `a6bcc9fc5`, server 26.10.0.
+- Backup: `actual-20261014T054942Z.tar.gz`; rollback: `compose.pre-perf-a6bcc9fc5.yaml`.
+- Branch `perf/mobile-household`; worktree `/Users/steven/dev/actual-ynab-ui`.
 
 ## Next actions
 
-1. Back up Mini, deploy verified bundle, verify live health/version and read-only UI.
-2. Record installed build in this scope.
+- Existing browser/PWA: use **Update now** or reload to activate the new bundle.
+- Further work should profile actual Android hardware and slower startup, if needed.
 
 ## Needs Steven
 
@@ -37,5 +36,4 @@ verify: yarn typecheck
 
 ## Limits
 
-- Desktop Chromium at mobile viewport with CPU throttling is a proxy, not an Android hardware measurement.
-- Benchmark uses a serverless private export copy; live financial records are untouched.
+- [Benchmark](mobile-benchmark.md) uses a private copy and CPU-throttled Chromium, not actual Android hardware.

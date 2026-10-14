@@ -60,3 +60,11 @@ Reloads have one sample per cache condition per CPU rate and are exploratory. Th
 Aggregate, nonfinancial evidence is retained in [mobile-results.json](mobile-results.json). Detailed private runs remain under `/tmp/actual-perf-*` locally. Use `ACTUAL_PERF_CPU_RATES=1,4,6 ACTUAL_PERF_MAX_CLICK_MS=2000` to repeat the delivery stress test.
 
 Verification includes root typecheck, production build, type-aware lint of changed TypeScript, 38 core utility tests, and 7 loader/spreadsheet tests. The latter cover cached and uncached reads, zero balances, month transitions, fresh worker results, and older responses losing to newer change events. Mobile and desktop budget workflow verification and installed release are recorded in [STATUS.md](STATUS.md).
+
+## Delivery
+
+Deployed source `a6bcc9fc5` as `actual-household-ui:a6bcc9fc5` on the Mac Mini. A separate empty-data container passed health, index and release-metadata checks before deployment. The live data/Compose archive `actual-20261014T054942Z.tar.gz` was verified before changing the image; the previous image and `compose.pre-perf-a6bcc9fc5.yaml` remain available.
+
+After deployment the browser activated the new service worker/bundle, rendered the live household's 85 category rows, switched September→October, and completed the normal sync command with no error. Health reports UP and release metadata reports the expected revision. Live verification used the local SSH-forwarded endpoint; unauthenticated public HTTPS still redirects to Cloudflare Access. No manual live transactions or assignments were changed.
+
+The final source passed all 48 mobile/desktop budget workflow tests. The final local browser visual check confirmed that an extreme amount shrinks to fit and returning to a small amount restores the 12 px font. Existing PWA clients must activate **Update now** or reload; clearing browser storage is unnecessary.
