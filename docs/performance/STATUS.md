@@ -10,7 +10,6 @@ verify: ssh mini 'curl -fsS http://127.0.0.1:5006/household-build.json'
 
 - Prefetch the budget's IndexedDB blocks before SQLite opens (absurd-sql stall).
 - Mount the first screen of budget rows first, the rest in a transition.
-- Earlier: route-module reuse, bounded number formatters, prewarmed cells.
 
 ## Verified
 
