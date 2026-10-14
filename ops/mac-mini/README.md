@@ -1,8 +1,8 @@
 # Household Actual deployment
 
 Actual 26.10.0 runs on Steven's Mac Mini in Docker. The image is pinned by digest
-in `compose.yaml`; it is the stable upstream image, not a build of this checkout.
-Custom patches need a separately built image and a deliberate compose update.
+as the base of the custom `actual-household-ui:dce00af72` image in `compose.yaml`.
+The sync server is unchanged; the browser bundle is built from this household fork.
 
 ## Locations
 
@@ -122,3 +122,29 @@ Private source JSON, Actual ZIP, and comparison reports live on the MacBook in
 `~/.config/actual-budget/migration/`, outside git. Mini copies and import/verify
 logs live in `~/services/actual/migration/`. Server backups were taken before
 and after import. YNAB was read only; no bank linking or transaction edits done.
+
+## Household UI deployment — 2026-10-14
+
+Live image: `actual-household-ui:dce00af72` (ARM64), image ID
+`sha256:435a2b1342560ff2aa089fa53a1001f761afce0a6b799c7493e9c3f24a5138b9`.
+Browser source revision: `dce00af72`; base server remains pinned 26.10.0.
+Build recipe: `ui.Dockerfile`. Release context is on the Mini in
+`~/services/actual/ui-releases/dce00af72/`. No registry publication.
+
+Run root typecheck, then browser build sequentially (both write under build/).
+Stage `packages/desktop-client/build/` beside ui.Dockerfile named Dockerfile;
+build with `docker build --build-arg UI_REVISION=<revision> -t actual-household-ui:<revision> .`.
+Smoke-test a separate container/data directory before updating live compose.
+`/household-build.json` identifies the web release; `/health` checks the server.
+
+Pre-deployment verified backup: `backups/actual-20261014T051148Z.tar.gz`.
+Previous compose: `compose.pre-ui-20261014.yaml`. To roll back the web release:
+
+```sh
+cd ~/services/actual
+cp compose.pre-ui-20261014.yaml compose.yaml
+/usr/local/bin/docker compose up -d actual
+```
+
+Existing browsers/PWAs may offer **Update now** or require a reload to activate
+the new cached app. Reload does not remove the local budget.

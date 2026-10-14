@@ -1,7 +1,7 @@
 ---
 project: Actual Household UI
 state: active
-milestone: YNAB-inspired budget and sidebar preview
+milestone: YNAB-inspired household UI deployed to Mini
 updated: 2026-10-14
 verify: yarn typecheck
 ---
@@ -20,19 +20,21 @@ verify: yarn typecheck
 - Root typecheck passes; modified TypeScript files pass type-aware lint.
 - Sidebar Account tests: 3 passed. Formatting and diff whitespace checks pass.
 - Desktop light/dark and mobile demo visually inspected.
-- Latest desktop budget E2E: 9 passed; percentage-template engine suite: 86 passed.
+- Final desktop budget + mobile automation E2E: 10 passed; template engine: 86 passed.
+- Offscreen month controls inert; focus no longer scrolls the summary strip.
 - Prior mobile envelope/tracking editing and month navigation: 6 passed.
-- Production browser build passes; two-month alignment visually checked.
+- Production build passes; two-month alignment checked; live S&S Household downloaded/rendered and sync returned HTTP 200.
 
 ## Delivered
 
 - Isolated branch `feat/ynab-inspired-ui` in `/Users/steven/dev/actual-ynab-ui`.
 - Local built preview: http://localhost:3002 (demo data only).
-- Mac Mini production remains Actual 26.10.0; redesign not deployed.
+- Mini: `actual-household-ui:dce00af72`, server 26.10.0, deployed 2026-10-14.
+- Verified backup `actual-20261014T051148Z.tar.gz`; previous compose retained.
 
 ## Next actions
 
-- Review preview before a separate Mini deployment.
+- Use live UI at https://budget.stevengoff.dev; reload/update existing PWA.
 - Configure household Take-home pay and Tithing categories using [the workflow](month-ahead-budgeting.md).
 
 ## Needs Steven
