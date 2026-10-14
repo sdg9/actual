@@ -22,7 +22,7 @@ verify: node --test ops/mac-mini/balance-sync/plan.test.cjs
 - Preserve Fidelity split; no consolidation planned.
 - Repeat API sync verified: transaction count unchanged at 22,065, zero new IDs. Account count remains 102.
 - All 34 post-migration additions screened against existing same-account/same-amount transactions within seven days: no matches. Nine reused import-ID pairs predate this sync (2018); untouched.
-- Three Chase credit-card cleared balances match provider values. Checking, migrated Capital One card, mortgage, and investment discrepancies require review; no forced adjustments.
+- Three Chase credit-card cleared balances match provider values. User confirmed migrated card ledger is correct and provider zero is wrong. Fresh Checking sync still has stale provider balance/pending payment; residual difference and old uncleared items need reconciliation. Mortgage remains unresolved; no forced cash adjustments.
 - Balance-only LaunchAgent installed on Mini: daily 07:15 local; triggered scheduled command completed with exit 0 and no new adjustments. Normal bank-transaction scheduling and next-day provider refresh remain unverified.
 - MCP default changed from trial to household; verified through read-only MCP account list with household account IDs.
 - HSA Bank, Optum, and Navia provider authorization remains unresolved; legacy Discover feeds intentionally skipped.
