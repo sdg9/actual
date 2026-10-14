@@ -26,7 +26,7 @@ export const BudgetPageHeader = memo<BudgetPageHeaderProps>(
       <View
         style={{
           marginLeft:
-            200 + 100 * categoryExpandedState + 5 - offsetMultipleMonths,
+            numMonths === 1 ? 5 : 200 + 100 * categoryExpandedState + 5,
           flexShrink: 0,
         }}
       >

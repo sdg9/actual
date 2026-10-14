@@ -40,8 +40,9 @@ import { isTouchDevice } from '#util/isTouchDevice';
 export const accountNameStyle: CSSProperties = {
   marginTop: -2,
   marginBottom: 2,
-  paddingTop: 4,
-  paddingBottom: 4,
+  paddingTop: 7,
+  paddingBottom: 7,
+  borderRadius: 6,
   paddingRight: 15,
   paddingLeft: 10,
   textDecoration: 'none',

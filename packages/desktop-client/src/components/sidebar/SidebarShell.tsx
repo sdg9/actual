@@ -28,7 +28,7 @@ type SidebarShellProps = {
 };
 
 export function SidebarShell({
-  defaultWidth = 240,
+  defaultWidth = 264,
   className,
   children,
 }: SidebarShellProps) {

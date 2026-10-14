@@ -4,8 +4,8 @@ description: Local-first personal finance, built around envelope budgeting
 # All color values are the light-theme palette mapping; dark and midnight
 # remap the same semantic roles via `theme.*` tokens (see The Semantic Token Rule).
 colors:
-  actual-purple: '#8719e0'
-  actual-purple-hover: '#a368fc'
+  actual-blue: '#0b5fa3'
+  actual-blue-hover: '#034388'
   navy-ink: '#102a43'
   navy-slate: '#627d98'
   navy-mist: '#e8ecf0'
@@ -49,12 +49,12 @@ spacing:
   lg: '20px'
 components:
   button-primary:
-    backgroundColor: '{colors.actual-purple}'
+    backgroundColor: '{colors.actual-blue}'
     textColor: '{colors.surface-white}'
     rounded: '{rounded.sm}'
     padding: '5px 10px'
   button-primary-hover:
-    backgroundColor: '{colors.actual-purple-hover}'
+    backgroundColor: '{colors.actual-blue-hover}'
     textColor: '{colors.surface-white}'
   button-normal:
     backgroundColor: '{colors.surface-white}'
@@ -81,20 +81,20 @@ The system explicitly rejects fintech-startup gloss (gradient heroes, glassmorph
 **Key Characteristics:**
 
 - Table-first layouts with tabular numerals everywhere money appears
-- One accent (Actual Purple) used sparingly for primary actions and selection
+- One accent (Actual Blue) used sparingly for primary actions and selection
 - Semantic color tokens only; components never hardcode hex values
 - Utilitarian, compact components built for daily repetition
 - Flat-first surfaces; shadows reserved for transient overlays
 
 ## 2. Colors
 
-A calm navy-neutral base with one confident purple accent and strict semantic roles for money.
+A calm navy-neutral base with one confident blue accent and strict semantic roles for money.
 
 All hex values in this file (frontmatter included) are the light-theme palette mapping. The dark and midnight themes remap the same semantic roles to different palette values, so never use these hexes directly in components — route every color through the `theme.*` semantic tokens (see The Semantic Token Rule below).
 
 ### Primary
 
-- **Actual Purple** (#8719e0): The single brand accent. Primary buttons, selected rows and borders, active navigation, mobile header. Hover lightens to **Lifted Purple** (#a368fc).
+- **Actual Blue** (#0b5fa3): The single brand accent. Primary buttons, selected rows and borders, active navigation, mobile header. Hover darkens to **Deep Blue** (#034388).
 
 ### Neutral
 
@@ -116,7 +116,7 @@ All hex values in this file (frontmatter included) are the light-theme palette m
 
 **The Semantic Token Rule.** Components never use raw palette values or hex codes. Every color goes through the `theme.*` semantic layer (`--color-*` custom properties) so all three themes (light, dark, midnight) stay correct. A hardcoded hex in a component is a bug.
 
-**The One Accent Rule.** Actual Purple appears on well under 10% of any screen: primary action, current selection, active nav. It never decorates.
+**The One Accent Rule.** Actual Blue appears on well under 10% of any screen: primary action, current selection, active nav. It never decorates.
 
 **The Never-Color-Alone Rule.** Positive/negative money state is conveyed by sign and context as well as color; green/red are reinforcement, never the only signal.
 
@@ -184,7 +184,7 @@ Utilitarian and quick: compact paddings, instant state feedback, built for daily
 ### Buttons
 
 - **Shape:** Gently rounded (4px radius), compact padding (5px 10px)
-- **Primary:** Actual Purple background, white text; hover lifts to Lifted Purple with a soft shadow transition (`box-shadow .25s`)
+- **Primary:** Deep Blue background, white text; hover shifts to darker Blue with a soft shadow transition (`box-shadow .25s`)
 - **Normal:** White background, Navy Ink text, 1px navy border
 - **Bare:** Transparent, 5px padding; background tint on hover/press. The workhorse for in-table actions
 
@@ -203,8 +203,8 @@ Utilitarian and quick: compact paddings, instant state feedback, built for daily
 
 ### Navigation
 
-- **Sidebar:** Navy Ink background, light navy text; hover darkens the row, selection marked with a purple accent and purple text. Status states (pending/positive/failed) tint the item background gold/green/red
-- **Mobile:** Purple header, white nav bar, purple selected item
+- **Sidebar:** Deep Blue background, light navy text; rounded selection with a lighter blue fill and white text. Status states (pending/positive/failed) tint the item background gold/green/red
+- **Mobile:** Blue header, white nav bar, blue selected item
 
 ### Pills / Chips
 
@@ -212,7 +212,7 @@ Utilitarian and quick: compact paddings, instant state feedback, built for daily
 
 ### Signature Component: The Money Table
 
-The core surface of the app. White rows on 1px Navy Mist borders, Frost hover, purple-bordered selection, sticky header with Slate 13px text, amounts right-aligned in tabular figures colored by the semantic money tokens. Alternate-row striping is theme-controlled, never hardcoded.
+The core surface of the app. White rows on 1px Navy Mist borders, Frost hover, blue-bordered selection, sticky header with Slate 13px text, amounts right-aligned in tabular figures colored by the semantic money tokens. Alternate-row striping is theme-controlled, never hardcoded.
 
 ## 6. Do's and Don'ts
 
@@ -222,7 +222,7 @@ The core surface of the app. White rows on 1px Navy Mist borders, Frost hover, p
 - **Do** wrap standalone financial numbers in `FinancialText` or apply `styles.tnum`.
 - **Do** keep components compact and quick: 4px radii, 5-10px paddings, instant hover/press states.
 - **Do** reuse the existing component library (`@actual-app/components`) before writing new UI.
-- **Do** keep Actual Purple scarce: primary action and selection only.
+- **Do** keep Actual Blue scarce: primary action and selection only.
 - **Do** respect the breakpoints: 512px (small), 730px (medium), 1100px (wide); mobile touch targets are at least 40px tall.
 
 ### Don't:
@@ -234,3 +234,14 @@ The core surface of the app. White rows on 1px Navy Mist borders, Frost hover, p
 - **Don't** put shadows on persistent surfaces; shadows are for transient overlays only.
 - **Don't** use `border-left`/`border-right` thicker than 1px as a colored accent stripe.
 - **Don't** animate layout properties; transitions are for color, opacity, and shadow (like the button's `box-shadow .25s`).
+
+## Household budget redesign (2026-10-13)
+
+The household fork uses a YNAB-inspired blue light theme with compact, editable
+budget rows. A single-month summary spans the category and amount columns;
+multi-month summaries remain aligned to their respective month columns. The
+summary separates the amount to budget from its supporting arithmetic. Desktop
+category balances use compact semantic pills; negative signs and goal states
+remain visible. Both sidebar variants share the blue light palette. Dark and
+midnight retain their native semantic palettes, with the same improved layout.
+No YNAB branding or financial calculation semantics are copied.

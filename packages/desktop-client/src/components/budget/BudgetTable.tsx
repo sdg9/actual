@@ -272,7 +272,9 @@ export function BudgetTable(props: BudgetTableProps) {
           paddingRight: 5 + getScrollbarWidth(),
         }}
       >
-        <View style={{ width: 200 + 100 * categoryExpandedState }} />
+        {numMonths > 1 && (
+          <View style={{ width: 200 + 100 * categoryExpandedState }} />
+        )}
         <MonthsProvider
           startMonth={prewarmStartMonth}
           numMonths={numMonths}

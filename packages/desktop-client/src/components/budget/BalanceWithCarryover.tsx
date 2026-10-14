@@ -95,6 +95,7 @@ type BalanceWithCarryoverProps = Omit<
   shouldInlineGoalStatus?: boolean;
   CarryoverIndicator?: ComponentType<CarryoverIndicatorProps>;
   tooltipDisabled?: boolean;
+  showBadge?: boolean;
 };
 
 export function BalanceWithCarryover({
@@ -107,6 +108,7 @@ export function BalanceWithCarryover({
   shouldInlineGoalStatus,
   CarryoverIndicator: CarryoverIndicatorComponent = CarryoverIndicator,
   tooltipDisabled,
+  showBadge = false,
   children,
   ...props
 }: BalanceWithCarryoverProps) {
@@ -140,6 +142,12 @@ export function BalanceWithCarryover({
     (balanceValue: number) =>
       css({
         ...getBalanceAmountStyle(balanceValue),
+        ...(showBadge && {
+          borderRadius: 999,
+          padding: '2px 8px',
+          fontWeight: 600,
+          backgroundColor: `color-mix(in srgb, ${getBalanceAmountStyle(balanceValue)?.color ?? theme.budgetNumberNeutral} 12%, transparent)`,
+        }),
         overflow: 'hidden',
         textOverflow: 'ellipsis',
         textAlign: 'right',
@@ -148,7 +156,7 @@ export function BalanceWithCarryover({
         }),
         ':hover': { textDecoration: 'underline' },
       }),
-    [getBalanceAmountStyle, isDisabled],
+    [getBalanceAmountStyle, isDisabled, showBadge],
   );
   const GoalStatusDisplay = useCallback(
     (balanceValue, type) => {

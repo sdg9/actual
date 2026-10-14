@@ -8,7 +8,6 @@ import {
   SvgArrowButtonUp1,
 } from '@actual-app/components/icons/v2';
 import { Popover } from '@actual-app/components/popover';
-import { styles } from '@actual-app/components/styles';
 import { theme } from '@actual-app/components/theme';
 import { View } from '@actual-app/components/view';
 import * as monthUtils from '@actual-app/core/shared/months';
@@ -70,8 +69,8 @@ export const BudgetSummary = memo(({ month }: BudgetSummaryProps) => {
           month === currentMonth
             ? theme.budgetCurrentMonth
             : theme.budgetOtherMonth,
-        boxShadow: styles.cardShadow,
-        borderRadius: 6,
+        border: '1px solid ' + theme.tableBorder,
+        borderRadius: 12,
         marginLeft: 0,
         marginRight: 0,
         marginTop: 5,
@@ -83,7 +82,7 @@ export const BudgetSummary = memo(({ month }: BudgetSummaryProps) => {
           opacity: 0,
           transition: 'opacity .25s',
         },
-        '&:hover .hover-visible': {
+        '&:hover .hover-visible, &:focus-within .hover-visible': {
           opacity: 1,
         },
       }}
@@ -126,8 +125,8 @@ export const BudgetSummary = memo(({ month }: BudgetSummaryProps) => {
               {
                 textAlign: 'center',
                 marginTop: 3,
-                fontSize: 18,
-                fontWeight: 500,
+                fontSize: 22,
+                fontWeight: 600,
                 textDecorationSkip: 'ink',
               },
               currentMonth === month && { fontWeight: 'bold' },
@@ -266,26 +265,26 @@ export const BudgetSummary = memo(({ month }: BudgetSummaryProps) => {
             />
           </View>
         ) : (
-          <>
+          <View
+            style={{
+              flexDirection: 'row',
+              flexWrap: 'wrap',
+              alignItems: 'center',
+              justifyContent: 'space-evenly',
+              gap: 16,
+              padding: '18px 16px',
+            }}
+          >
+            <ToBudget
+              prevMonthName={prevMonthName}
+              month={month}
+              onBudgetAction={onBudgetAction}
+            />
             <TotalsList
               prevMonthName={prevMonthName}
-              style={{
-                padding: '5px 0',
-                marginTop: 17,
-                backgroundColor: theme.budgetHeaderCurrentMonth,
-                borderTopWidth: 1,
-                borderBottomWidth: 1,
-                borderColor: theme.tableBorder,
-              }}
+              style={{ padding: '4px 0', color: theme.pageTextLight }}
             />
-            <View style={{ margin: '23px 0' }}>
-              <ToBudget
-                prevMonthName={prevMonthName}
-                month={month}
-                onBudgetAction={onBudgetAction}
-              />
-            </View>
-          </>
+          </View>
         )}
       </SheetNameProvider>
     </View>
