@@ -74,3 +74,20 @@ Verified on a private copy of the server, in Android Chrome:
 For the live budget, a payee rule (Marqeta payroll / Ethos Veterinary /
 Nordstrom deposits → Take-home pay) keeps future bank-synced paychecks in the
 right category. Re-apply the template after late paychecks arrive.
+
+## Live setup, 2026-10-14
+
+Applied to the household budget with Steven's approval, after verified backup
+`actual-20261014T152320Z.tar.gz`:
+
+- Goal templates enabled (`flags.goalTemplatesEnabled`).
+- Income category **Take-home pay** created.
+- Rules (inflows to Chase: Checking only): payee Ethos Veterinary, either
+  Marqeta payroll payee, or Nordstrom → Take-home pay; imported payee
+  containing "payroll" → Take-home pay.
+- Eight September–October paychecks moved from Income to Take-home pay.
+- Tithing notes gained `#template 10% of previous Take-home pay`; existing
+  note text kept.
+- To Budget for September, October and November was identical before and
+  after. No amounts were assigned; November's template is applied by hand
+  once October's paychecks are complete.

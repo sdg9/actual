@@ -1,6 +1,6 @@
 ---
 project: Actual Household UI
-state: waiting-on-steven
+state: active
 milestone: Mobile category screen, bottom sheets and visible month-ahead actions deployed
 updated: 2026-10-14
 verify: yarn typecheck
@@ -25,14 +25,12 @@ verify: yarn typecheck
 
 ## Next actions
 
-- After Steven's decision below, configure the live budget per [the workflow](month-ahead-budgeting.md).
-- Optional: close YNAB divider pseudo-accounts ("===…===") that clutter Accounts and Bank Sync.
+- Late October: November → Tithing → Budgeted → Actions → Overwrite with template.
+- Optional: close YNAB divider pseudo-accounts ("===…===") cluttering Accounts/Bank Sync.
 
 ## Needs Steven
 
-- Approve live-budget tithing setup: enable Goal templates; add a Take-home pay income
-  category; move payroll/Ethos/Nordstrom deposits there; add the Tithing template.
-  "Income" currently mixes paychecks with reconciliation adjustments (Oct net $1,798 vs $6,102 pay).
+- none (live tithing setup approved and applied 2026-10-14)
 
 ## Limits
 
