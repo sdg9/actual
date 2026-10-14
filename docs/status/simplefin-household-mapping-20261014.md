@@ -1,9 +1,9 @@
 ---
 project: Actual household bank sync
-state: waiting-on-steven
+state: active
 milestone: Connect SimpleFIN feeds to imported household accounts
 updated: 2026-10-14
-verify: Browser Bank Sync page shows 15 linked accounts with recent sync timestamps
+verify: node --test ops/mac-mini/balance-sync/plan.test.cjs
 ---
 
 ## Implemented and verified
@@ -16,18 +16,19 @@ verify: Browser Bank Sync page shows 15 linked accounts with recent sync timesta
 
 ## Needs Steven
 - Fidelity decision resolved: retain on-budget money market and off-budget investments; combined feed remains unlinked.
-- Awaiting choice of balance-only tracking for nine other investment/HSA accounts, because imported trading activity distorts total-value ledgers.
+- Nine investment/HSA accounts converted to approved balance-only tracking; no pending choice.
 
 ## Remaining
 - Preserve Fidelity split; no consolidation planned.
 - Repeat API sync verified: transaction count unchanged at 22,065, zero new IDs. Account count remains 102.
 - All 34 post-migration additions screened against existing same-account/same-amount transactions within seven days: no matches. Nine reused import-ID pairs predate this sync (2018); untouched.
 - Three Chase credit-card cleared balances match provider values. Checking, migrated Capital One card, mortgage, and investment discrepancies require review; no forced adjustments.
-- No unattended sync LaunchAgent or cron job found. Schedule remains pending investment policy; next-day refresh not yet verified.
+- Balance-only LaunchAgent installed on Mini: daily 07:15 local; triggered scheduled command completed with exit 0 and no new adjustments. Normal bank-transaction scheduling and next-day provider refresh remain unverified.
 - MCP default changed from trial to household; verified through read-only MCP account list with household account IDs.
 - HSA Bank, Optum, and Navia provider authorization remains unresolved; legacy Discover feeds intentionally skipped.
-- Investment ledger balances may require market-value adjustments; no automatic reconciliation adjustments were made.
+- Nine investment/HSA totals now match SimpleFIN. Seven dated adjustments added; original 22,065 transactions unchanged, verified from a fresh download. Six native transaction feeds remain.
+- Backup before conversion: actual-20261014T192217Z.tar.gz. Private mappings/logs stay on Mini; [runbook](../../ops/mac-mini/balance-sync/README.md).
 
 ## Delivery evidence
 - Actual household Bank Sync page visibly lists all 15 linked accounts with recent sync timestamps on 2026-10-14.
-- Documentation-only change; required yarn typecheck attempted but yarn was unavailable in this shell.
+- Nine balance-planning/failure-handling tests pass; runner syntax and LaunchAgent plist validate. Required yarn typecheck attempted but yarn is unavailable; no application TypeScript modified.
