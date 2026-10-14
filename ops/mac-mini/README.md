@@ -212,3 +212,11 @@ Tithing screen rendered without console errors. Rollback to `b4efb1327`:
 Current image: `actual-household-ui:a406e34e7` (`sha256:ea1cf582a6a18667430483b879cae014bd748ca37320cea9f90487b46a8068e2`).
 Smoke test passed; verified backup `backups/actual-20261014T182312Z.tar.gz`.
 Rollback to `0fa3b3c8f`: `cp compose.pre-ui-a406e34e7.yaml compose.yaml && /usr/local/bin/docker compose up -d actual`.
+
+## Mobile account groups release — 2026-10-14
+
+Current image: `actual-household-ui:215bd15af` (`sha256:ea9c48b66c088917c20b54a88f11fcf22c6cdd1e56a97b8690af668abb8f2c95`).
+Smoke test passed; verified backup `backups/actual-20261014T191002Z.tar.gz`.
+Rollback to `a406e34e7`: `cp compose.pre-ui-215bd15af.yaml compose.yaml && /usr/local/bin/docker compose up -d actual`.
+Note: wait for an SSH tunnel to answer `/health` before browser checks; an
+unready tunnel looks like a failed login.

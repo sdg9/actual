@@ -12,6 +12,7 @@ verify: yarn typecheck
 - Phone dialogs are bottom sheets above the keyboard; viewport CSS variables now set.
 - Budget Summary sheet lists Move / Hold for next month / Cover / Reset hold.
 - Visual pass: navy dark theme, balance-only pills, To Budget card, compact banners.
+- Account groups on mobile (headers + subtotals); account menu → Account group….
 
 ## Verified
 
@@ -22,12 +23,12 @@ verify: yarn typecheck
 
 ## Delivered
 
-- Mini: `actual-household-ui:a406e34e7`, 2026-10-14.
+- Mini: `actual-household-ui:215bd15af`, 2026-10-14.
 
 ## Next actions
 
 - Late October: November → Tithing → Budgeted → Actions → Overwrite with template.
-- Optional: close YNAB divider pseudo-accounts ("===…===") cluttering Accounts/Bank Sync.
+- Replace "===…===" divider accounts with real account groups once Steven confirms grouping.
 
 ## Needs Steven
 
