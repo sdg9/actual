@@ -56,7 +56,9 @@ export function ToBudgetAmount({
 
   return (
     <View style={{ alignItems: 'center', ...style }}>
-      <Block>{isNegative ? t('Overbudgeted:') : t('To Budget:')}</Block>
+      <Block style={{ fontWeight: 600, color: theme.pageTextLight }}>
+        {isNegative ? t('Overbudgeted:') : t('To Budget:')}
+      </Block>
       <View>
         <Tooltip
           content={
@@ -77,13 +79,25 @@ export function ToBudgetAmount({
             }}
           >
             <Block
+              role="button"
+              tabIndex={0}
+              aria-label={t('Budget actions')}
+              onKeyDown={event => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  onClick();
+                }
+              }}
               onClick={onClick}
               onContextMenu={onContextMenu}
               data-cellname={sheetName}
               className={css([
                 styles.veryLargeText,
                 {
-                  fontWeight: 400,
+                  fontWeight: 700,
+                  padding: '6px 18px',
+                  borderRadius: 8,
+                  backgroundColor: `color-mix(in srgb, ${isNegative ? theme.toBudgetNegative : theme.toBudgetPositive} 12%, transparent)`,
                   userSelect: 'none',
                   cursor: 'pointer',
                   color: isPositive
@@ -93,6 +107,10 @@ export function ToBudgetAmount({
                       : theme.toBudgetZero,
                   marginBottom: -1,
                   borderBottom: '1px solid transparent',
+                  ':focus-visible': {
+                    outline: `2px solid ${theme.tableBorderSelected}`,
+                    outlineOffset: 3,
+                  },
                   ':hover': {
                     borderColor: isPositive
                       ? theme.toBudgetPositive

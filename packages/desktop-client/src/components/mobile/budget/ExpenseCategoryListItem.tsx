@@ -10,24 +10,19 @@ import type { CSSProperties } from '@actual-app/components/styles';
 import { Text } from '@actual-app/components/text';
 import { theme } from '@actual-app/components/theme';
 import { View } from '@actual-app/components/view';
-import type { BudgetType } from '@actual-app/core/server/prefs';
 import * as monthUtils from '@actual-app/core/shared/months';
 import type { CategoryEntity } from '@actual-app/core/types/models';
 
-import { useCategoriesById } from '#hooks/useCategories';
-import { useFormat } from '#hooks/useFormat';
 import { useNavigate } from '#hooks/useNavigate';
-import { useSheetValue } from '#hooks/useSheetValue';
 import { useSyncedPref } from '#hooks/useSyncedPref';
-import { useUndo } from '#hooks/useUndo';
-import { collapseModals, pushModal } from '#modals/modalsSlice';
-import { useDispatch } from '#redux';
 import { envelopeBudget, trackingBudget } from '#spreadsheet/bindings';
 
 import { BalanceCell } from './BalanceCell';
 import { BudgetCell } from './BudgetCell';
 import { getColumnWidth, ROW_HEIGHT } from './BudgetTable';
 import { SpentCell } from './SpentCell';
+import { useCategoryBalanceMenu } from './useCategoryActions';
+import type { OnBudgetAction } from './useCategoryActions';
 
 type ExpenseCategoryNameProps = {
   category: CategoryEntity;
@@ -103,7 +98,7 @@ function ExpenseCategoryName({
 type ExpenseCategoryCellsProps = {
   category: CategoryEntity;
   month: string;
-  onBudgetAction: (month: string, action: string, args: unknown) => void;
+  onBudgetAction: OnBudgetAction;
   show3Columns: boolean;
   showBudgetedColumn: boolean;
   onOpenBalanceMenu: () => void;
@@ -211,7 +206,7 @@ type ExpenseCategoryListItemProps = ComponentPropsWithoutRef<
   show3Columns: boolean;
   showBudgetedColumn: boolean;
   onEditCategory: (id: CategoryEntity['id']) => void;
-  onBudgetAction: (month: string, action: string, args: unknown) => void;
+  onBudgetAction: OnBudgetAction;
 };
 
 export function ExpenseCategoryListItem({
@@ -225,184 +220,11 @@ export function ExpenseCategoryListItem({
 }: ExpenseCategoryListItemProps) {
   const { value: category } = props;
 
-  const { t } = useTranslation();
-  const [budgetType = 'envelope'] = useSyncedPref('budgetType');
-  const format = useFormat();
-
-  const balanceMenuModalName =
-    `${budgetType as BudgetType}-balance-menu` as const;
-  const dispatch = useDispatch();
-  const { showUndoNotification } = useUndo();
-  const {
-    data: { list: categoriesById } = {
-      list: {} as Record<string, CategoryEntity>,
-    },
-  } = useCategoriesById();
-
-  const onCarryover = useCallback(
-    (carryover: boolean) => {
-      if (!category) {
-        return;
-      }
-      onBudgetAction(month, 'carryover', {
-        category: category.id,
-        flag: carryover,
-      });
-      dispatch(collapseModals({ rootModalName: balanceMenuModalName }));
-    },
-    [category, onBudgetAction, month, dispatch, balanceMenuModalName],
-  );
-
-  const catBalance = useSheetValue<
-    'envelope-budget' | 'tracking-budget',
-    'leftover'
-  >(
-    budgetType === 'envelope'
-      ? envelopeBudget.catBalance(category?.id)
-      : trackingBudget.catBalance(category?.id),
-  );
-
-  const onTransfer = useCallback(() => {
-    if (!category) {
-      return;
-    }
-    dispatch(
-      pushModal({
-        modal: {
-          name: 'transfer',
-          options: {
-            title: category.name,
-            categoryId: category.id,
-            month,
-            amount: catBalance || 0,
-            onSubmit: (amount, toCategoryId) => {
-              onBudgetAction(month, 'transfer-category', {
-                amount,
-                from: category.id,
-                to: toCategoryId,
-                currencyCode: format.currency.code,
-              });
-              dispatch(collapseModals({ rootModalName: balanceMenuModalName }));
-              showUndoNotification({
-                message: t(
-                  'Transferred {{amount}} from {{fromCategoryName}} to {{toCategoryName}}.',
-                  {
-                    amount: format(amount, 'financial'),
-                    fromCategoryName: category.name,
-                    toCategoryName: categoriesById[toCategoryId].name,
-                  },
-                ),
-              });
-            },
-            showToBeBudgeted: true,
-          },
-        },
-      }),
-    );
-  }, [
+  const onOpenBalanceMenu = useCategoryBalanceMenu({
     category,
-    dispatch,
     month,
-    catBalance,
     onBudgetAction,
-    balanceMenuModalName,
-    showUndoNotification,
-    categoriesById,
-    format,
-    t,
-  ]);
-
-  const onCover = useCallback(() => {
-    if (!category) {
-      return;
-    }
-    dispatch(
-      pushModal({
-        modal: {
-          name: 'cover',
-          options: {
-            title: category.name,
-            month,
-            amount: catBalance,
-            categoryId: category.id,
-            onSubmit: (amount, fromCategoryId) => {
-              onBudgetAction(month, 'cover-overspending', {
-                to: category.id,
-                from: fromCategoryId,
-                amount,
-                currencyCode: format.currency.code,
-              });
-              dispatch(collapseModals({ rootModalName: balanceMenuModalName }));
-              showUndoNotification({
-                message: t(
-                  `Covered {{amount}} {{toCategoryName}} overspending from {{fromCategoryName}}.`,
-                  {
-                    amount: format(amount, 'financial'),
-                    toCategoryName: category.name,
-                    fromCategoryName: categoriesById[fromCategoryId].name,
-                  },
-                ),
-              });
-            },
-          },
-        },
-      }),
-    );
-  }, [
-    category,
-    dispatch,
-    month,
-    catBalance,
-    onBudgetAction,
-    balanceMenuModalName,
-    showUndoNotification,
-    t,
-    categoriesById,
-    format,
-  ]);
-
-  const onOpenBalanceMenu = useCallback(() => {
-    if (!category) {
-      return;
-    }
-    if (balanceMenuModalName === 'envelope-balance-menu') {
-      dispatch(
-        pushModal({
-          modal: {
-            name: balanceMenuModalName,
-            options: {
-              month,
-              categoryId: category.id,
-              onCarryover,
-              onTransfer,
-              onCover,
-            },
-          },
-        }),
-      );
-    } else {
-      dispatch(
-        pushModal({
-          modal: {
-            name: balanceMenuModalName,
-            options: {
-              month,
-              categoryId: category.id,
-              onCarryover,
-            },
-          },
-        }),
-      );
-    }
-  }, [
-    category,
-    balanceMenuModalName,
-    dispatch,
-    month,
-    onCarryover,
-    onTransfer,
-    onCover,
-  ]);
+  });
 
   const navigate = useNavigate();
   const onShowActivity = useCallback(() => {

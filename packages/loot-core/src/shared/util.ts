@@ -317,6 +317,13 @@ export function setNumberFormat(config: typeof numberFormatConfig) {
   numberFormatConfig = config;
 }
 
+// Share formatting machinery, never formatted amounts. Bound the cache because
+// callers can request arbitrary precision, including from imported preferences.
+const numberFormatterCache = new Map<
+  string,
+  { format: (value: number) => string }
+>();
+
 export function getNumberFormat({
   format = numberFormatConfig.format,
   hideFraction = numberFormatConfig.hideFraction,
@@ -376,20 +383,29 @@ export function getNumberFormat({
           maximumFractionDigits: currentHideFraction ? 0 : 2,
         };
 
-  const intlFormatter = new Intl.NumberFormat(locale, fractionDigitsOptions);
+  const cacheKey = `${currentFormat}:${fractionDigitsOptions.minimumFractionDigits}`;
+  let formatter = numberFormatterCache.get(cacheKey);
+  if (!formatter) {
+    const intlFormatter = new Intl.NumberFormat(locale, fractionDigitsOptions);
 
-  // Wrapper to handle -0 edge case
-  // Normalize apostrophe-dot to U+2019 for consistency across
-  // Node/ICU versions (https://github.com/nodejs/node/issues/61861)
-  const formatter = {
-    format: (value: number) => {
-      let formatted = intlFormatter.format(value);
-      if (currentFormat === 'apostrophe-dot') {
-        formatted = formatted.replace(/'/g, '\u2019');
-      }
-      return formatted === '-0' ? '0' : formatted;
-    },
-  };
+    // Wrapper to handle -0 edge case
+    // Normalize apostrophe-dot to U+2019 for consistency across
+    // Node/ICU versions (https://github.com/nodejs/node/issues/61861)
+    formatter = {
+      format: (value: number) => {
+        let formatted = intlFormatter.format(value);
+        if (currentFormat === 'apostrophe-dot') {
+          formatted = formatted.replace(/'/g, '\u2019');
+        }
+        return formatted === '-0' ? '0' : formatted;
+      },
+    };
+
+    if (numberFormatterCache.size >= 100) {
+      numberFormatterCache.clear();
+    }
+    numberFormatterCache.set(cacheKey, formatter);
+  }
 
   return {
     value: currentFormat,

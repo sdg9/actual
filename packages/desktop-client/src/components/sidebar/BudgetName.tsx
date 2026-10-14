@@ -29,7 +29,7 @@ export function BudgetName({ children }: BudgetNameProps) {
   return (
     <View
       style={{
-        paddingTop: 35,
+        paddingTop: 24,
         height: 30,
         flexDirection: 'row',
         alignItems: 'center',

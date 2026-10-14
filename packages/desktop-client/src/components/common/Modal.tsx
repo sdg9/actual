@@ -106,8 +106,15 @@ export const Modal = ({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            height: 'var(--visual-viewport-height)',
+            height: 'var(--visual-viewport-height, 100%)',
             overflowY: 'auto',
+            // On phones, dialogs are bottom sheets within thumb reach that
+            // stay above the on-screen keyboard.
+            ...(isNarrowWidth && {
+              justifyContent: 'flex-end',
+              alignItems: 'stretch',
+              marginTop: 'var(--visual-viewport-offset-top, 0px)',
+            }),
             ...wrapperProps?.style,
           }}
         >
@@ -118,11 +125,13 @@ export const Modal = ({
                 className={css(styles.lightScrollbar)}
                 style={{
                   outline: 'none', // remove focus outline
+                  ...(isNarrowWidth && { width: '100%' }),
                 }}
               >
                 <ModalContentContainer
                   noAnimation={noAnimation}
                   isActive={isActive(name)}
+                  isSheet={isNarrowWidth}
                   {...containerProps}
                   style={{
                     flex: 1,
@@ -130,9 +139,17 @@ export const Modal = ({
                     willChange: 'opacity, transform',
                     maxWidth: '90vw',
                     minWidth: '90vw',
-                    maxHeight: 'calc(var(--visual-viewport-height) * 0.9)',
+                    maxHeight:
+                      'calc(var(--visual-viewport-height, 100vh) * 0.9)',
                     minHeight: 0,
                     borderRadius: 6,
+                    ...(isNarrowWidth && {
+                      maxWidth: '100vw',
+                      minWidth: '100vw',
+                      borderRadius: '16px 16px 0 0',
+                      paddingBottom:
+                        'calc(10px + env(safe-area-inset-bottom, 0px))',
+                    }),
                     //border: '1px solid ' + theme.modalBorder,
                     color: theme.pageText,
                     backgroundColor: theme.modalBackground,
@@ -186,6 +203,7 @@ type ModalContentContainerProps = {
   style?: CSSProperties;
   noAnimation?: boolean;
   isActive?: boolean;
+  isSheet?: boolean;
   children: ReactNode;
 };
 
@@ -193,6 +211,7 @@ const ModalContentContainer = ({
   style,
   noAnimation,
   isActive,
+  isSheet,
   children,
 }: ModalContentContainerProps) => {
   const contentRef = useRef<HTMLDivElement>(null);
@@ -214,7 +233,9 @@ const ModalContentContainer = ({
         contentRef.current.style.willChange = 'auto';
         contentRef.current.style.pointerEvents = 'auto';
       } else {
-        contentRef.current.style.transform = `translateY(-40px) scale(.95) rotate(${rotateFactor.current}deg)`;
+        contentRef.current.style.transform = isSheet
+          ? 'scale(.96)'
+          : `translateY(-40px) scale(.95) rotate(${rotateFactor.current}deg)`;
         contentRef.current.style.pointerEvents = 'none';
       }
     }
@@ -247,7 +268,7 @@ const ModalContentContainer = ({
     } else {
       setProps();
     }
-  }, [noAnimation, isActive]);
+  }, [noAnimation, isActive, isSheet]);
 
   return (
     <View

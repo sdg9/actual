@@ -75,7 +75,7 @@ export function BudgetSummaries() {
   return (
     <div
       className={css([
-        { flex: 1, overflow: 'hidden' },
+        { flex: 1, overflow: 'clip' },
         months.length === 1 && {
           marginLeft: -4,
           marginRight: -4,
@@ -96,6 +96,8 @@ export function BudgetSummaries() {
           return (
             <View
               key={month}
+              inert={!months.includes(month)}
+              aria-hidden={!months.includes(month)}
               style={{
                 flex: `0 0 ${monthWidth}px`,
                 paddingLeft: 4,

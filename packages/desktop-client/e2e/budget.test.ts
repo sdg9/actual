@@ -38,6 +38,26 @@ test.describe('Budget', () => {
     await expect(page).toMatchThemeScreenshots();
   });
 
+  test('opens budget actions using the keyboard', async () => {
+    await expect(
+      page.getByRole('button', { name: 'Budget actions' }),
+    ).toHaveCount(1);
+    const amount = page
+      .getByRole('button', {
+        name: 'Budget actions',
+      })
+      .first();
+    const initialPosition = await amount.boundingBox();
+    await amount.focus();
+    expect(await amount.boundingBox()).toEqual(initialPosition);
+    await page.keyboard.press('Enter');
+    await expect(page.getByRole('menu')).toBeVisible();
+    await page.keyboard.press('Escape');
+    await amount.focus();
+    await page.keyboard.press('Space');
+    await expect(page.getByRole('menu')).toBeVisible();
+  });
+
   test('transfer funds to another category', async () => {
     const currentFundsA = await budgetPage.getBalanceForRow(1);
     const currentFundsB = await budgetPage.getBalanceForRow(2);

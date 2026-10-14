@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { styles } from '@actual-app/components/styles';
+import { theme } from '@actual-app/components/theme';
 import {
   format as formatMonth,
   prevMonth,
@@ -10,6 +11,7 @@ import {
 import type { CategoryEntity } from '@actual-app/core/types/models/category';
 
 import { ToBudgetAmount } from '#components/budget/envelope/budgetsummary/ToBudgetAmount';
+import { ToBudgetMenu } from '#components/budget/envelope/budgetsummary/ToBudgetMenu';
 import { TotalsList } from '#components/budget/envelope/budgetsummary/TotalsList';
 import { useEnvelopeSheetValue } from '#components/budget/envelope/EnvelopeBudgetComponents';
 import { Modal, ModalCloseButton, ModalHeader } from '#components/common/Modal';
@@ -177,6 +179,26 @@ export function EnvelopeBudgetSummaryModal({
               }}
               onClick={() => onClick({ close: () => state.close() })}
               isTotalsListTooltipDisabled
+            />
+            {/* Show the actions instead of hiding them behind the amount;
+                holding income for next month is a routine step. */}
+            <ToBudgetMenu
+              style={{ marginTop: 15 }}
+              getItemStyle={() => ({
+                ...styles.mobileMenuItem,
+                color: theme.menuItemText,
+                borderRadius: 0,
+                borderTop: `1px solid ${theme.pillBorder}`,
+              })}
+              month={month}
+              onTransfer={openTransferAvailableModal}
+              onCover={openCoverOverbudgetedModal}
+              onHoldBuffer={onHoldBuffer}
+              onResetHoldBuffer={() => {
+                onResetHoldBuffer();
+                state.close();
+              }}
+              onBudgetAction={onBudgetAction}
             />
           </SheetNameProvider>
         </>
