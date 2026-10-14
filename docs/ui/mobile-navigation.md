@@ -18,13 +18,13 @@ household budget) found these problems before the change:
 
 ## Decisions
 
-| Interaction | Where it belongs | Why |
-| --- | --- | --- |
-| Category name or Spent | Dedicated category screen | Details and history need room, a back button, and a stable URL. |
-| Budgeted amount | Bottom sheet with numeric keypad | A quick, single-field edit; returns to the same place. |
-| Balance amount | Bottom sheet: move money, cover, rollover | Short list of actions on the current envelope. |
-| Rename, hide, delete, automations | "More" on the category screen | Rare actions stay one step away, not on the row. |
-| Notes | Preview on the category screen; tap to edit | Notes were otherwise hidden behind a dialog. |
+| Interaction                       | Where it belongs                            | Why                                                             |
+| --------------------------------- | ------------------------------------------- | --------------------------------------------------------------- |
+| Category name or Spent            | Dedicated category screen                   | Details and history need room, a back button, and a stable URL. |
+| Budgeted amount                   | Bottom sheet with numeric keypad            | A quick, single-field edit; returns to the same place.          |
+| Balance amount                    | Bottom sheet: move money, cover, rollover   | Short list of actions on the current envelope.                  |
+| Rename, hide, delete, automations | "More" on the category screen               | Rare actions stay one step away, not on the row.                |
+| Notes                             | Preview on the category screen; tap to edit | Notes were otherwise hidden behind a dialog.                    |
 
 The category screen shows **Budgeted / Spent / Balance** for the month (Actual's
 terms, matching the budget table), with the balance coloured by goal status.
