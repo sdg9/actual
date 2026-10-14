@@ -541,6 +541,14 @@ budgetTypes.forEach(budgetType => {
         await expect(envelopeBudgetSummaryModal.heading).toHaveText(
           'Budget Summary',
         );
+        // To Budget actions (move, hold, cover) are listed in the sheet.
+        await expect(
+          page
+            .getByTestId('envelope-budget-summary-modal')
+            .getByRole('menu')
+            .getByRole('button')
+            .first(),
+        ).toBeVisible();
         await expect(page).toMatchThemeScreenshots();
       });
     }
