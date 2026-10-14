@@ -4,6 +4,8 @@ import type { Database, SqlJsStatic, Statement } from '@jlongster/sql.js';
 
 import { logger } from '#platform/server/log';
 
+import { prefetchFile } from './blockPrefetch';
+import type { PrefetchableFile } from './blockPrefetch';
 import { normalise } from './normalise';
 import type { SqlParam } from './types';
 import { unicodeLike } from './unicodeLike';
@@ -221,6 +223,37 @@ function regexp(regex: string, text: string) {
   return new RegExp(regex).test(text || '') ? 1 : 0;
 }
 
+async function prefetchDatabase(target: string) {
+  try {
+    // absurd-sql creates a file's node only when it's first opened. Create
+    // it now; SQLite's open reuses the same node and file.
+    const fs = SQL.FS as unknown as {
+      create: (path: string, mode: number) => unknown;
+    };
+    let node;
+    try {
+      node = SQL.FS.lookupPath(target).node;
+    } catch {
+      fs.create(target, 0o666);
+      node = SQL.FS.lookupPath(target).node;
+    }
+    const file = (node as unknown as { contents?: PrefetchableFile }).contents;
+    if (!file?.ops?.readBlocks) {
+      return;
+    }
+    const start = performance.now();
+    const prefetch = await prefetchFile(file);
+    if (prefetch) {
+      logger.log(
+        `Prefetched ${prefetch.size} database blocks in ${Math.round(performance.now() - start)}ms`,
+      );
+    }
+  } catch (e) {
+    // Prefetching only speeds up reads; SQLite still reads IndexedDB directly.
+    logger.warn('Database block prefetch failed', e);
+  }
+}
+
 export async function openDatabase(pathOrBuffer?: string | Uint8Array) {
   let db = null;
   if (pathOrBuffer) {
@@ -235,8 +268,13 @@ export async function openDatabase(pathOrBuffer?: string | Uint8Array) {
           SQL.FS.close(stream);
         }
 
+        const target = path.includes('/blocked') ? path : SQL.FS.readlink(path);
+        if (typeof SharedArrayBuffer !== 'undefined') {
+          await prefetchDatabase(target);
+        }
+
         db = new SQL.Database(
-          path.includes('/blocked') ? path : SQL.FS.readlink(path),
+          target,
           // @ts-expect-error 2nd argument missed in sql.js types
           { filename: true },
         );
