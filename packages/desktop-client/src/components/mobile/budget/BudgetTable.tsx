@@ -1,4 +1,10 @@
-import React, { useCallback, useMemo } from 'react';
+import React, {
+  startTransition,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import type { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -239,6 +245,34 @@ function Saved({ projected, onPress, show3Columns }: SavedProps) {
   );
 }
 
+// Enough rows to fill a phone screen on the first render.
+const FIRST_RENDER_ROWS = 14;
+// The budget is mounted in full once per app start; later visits (e.g. back
+// from a category) render everything at once so scroll positions survive.
+let hasRenderedAllGroups = false;
+
+function firstScreenGroups(
+  groups: CategoryGroupEntity[],
+  isCollapsed: (id: CategoryGroupEntity['id']) => boolean,
+  showHiddenCategories: boolean,
+) {
+  const result: CategoryGroupEntity[] = [];
+  let rows = 0;
+  for (const group of groups) {
+    result.push(group);
+    rows += 1;
+    if (!isCollapsed(group.id)) {
+      rows += (group.categories ?? []).filter(
+        category => showHiddenCategories || !category.hidden,
+      ).length;
+    }
+    if (rows >= FIRST_RENDER_ROWS) {
+      break;
+    }
+  }
+  return result;
+}
+
 type BudgetGroupsProps = {
   type: string;
   categoryGroups: CategoryGroupEntity[];
@@ -292,13 +326,43 @@ function BudgetGroups({
     [collapsedGroupIds],
   );
 
+  // Mounting every group at once costs over a second of main-thread work on
+  // a phone with a large budget. Show the first screen, then the rest in an
+  // interruptible transition so taps on visible rows stay responsive.
+  const [showAllGroups, setShowAllGroups] = useState(hasRenderedAllGroups);
+  useEffect(() => {
+    if (showAllGroups) {
+      hasRenderedAllGroups = true;
+      return;
+    }
+    // A timeout queued from an animation frame runs after that frame paints.
+    let timeout: ReturnType<typeof setTimeout> | undefined;
+    const frame = requestAnimationFrame(() => {
+      timeout = setTimeout(() => {
+        startTransition(() => setShowAllGroups(true));
+      }, 0);
+    });
+    return () => {
+      cancelAnimationFrame(frame);
+      clearTimeout(timeout);
+    };
+  }, [showAllGroups]);
+
+  const renderedExpenseGroups = useMemo(
+    () =>
+      showAllGroups
+        ? expenseGroups
+        : firstScreenGroups(expenseGroups, isCollapsed, showHiddenCategories),
+    [showAllGroups, expenseGroups, isCollapsed, showHiddenCategories],
+  );
+
   return (
     <View
       data-testid="budget-groups"
       style={{ flex: '1 0 auto', overflowY: 'auto', paddingBottom: 15 }}
     >
       <ExpenseGroupList
-        categoryGroups={expenseGroups}
+        categoryGroups={renderedExpenseGroups}
         showBudgetedColumn={showBudgetedColumn}
         month={month}
         onEditCategoryGroup={onEditCategoryGroup}
@@ -310,7 +374,7 @@ function BudgetGroups({
         onToggleCollapse={onToggleCollapse}
       />
 
-      {incomeGroup && (
+      {incomeGroup && showAllGroups && (
         <IncomeGroup
           categoryGroup={incomeGroup}
           month={month}
