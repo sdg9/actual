@@ -13,7 +13,7 @@ import { CellValue } from '#components/spreadsheet/CellValue';
 import { useFormat } from '#hooks/useFormat';
 import type { SheetFields } from '#spreadsheet';
 
-import { getColumnWidth, PILL_STYLE } from './BudgetTable';
+import { getColumnWidth, PLAIN_AMOUNT_STYLE } from './BudgetTable';
 import { useCategoryBudgetMenu } from './useCategoryActions';
 import type { OnBudgetAction } from './useCategoryActions';
 
@@ -64,7 +64,7 @@ export function BudgetCell<
           <Button
             variant="bare"
             style={{
-              ...PILL_STYLE,
+              ...PLAIN_AMOUNT_STYLE,
               maxWidth: columnWidth,
               ...makeAmountGrey(value),
             }}

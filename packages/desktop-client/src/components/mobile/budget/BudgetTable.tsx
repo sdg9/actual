@@ -48,6 +48,26 @@ export const PILL_STYLE: CSSProperties = {
   backgroundColor: theme.pillBackgroundLight,
 };
 
+// Category groups are rounded cards separated by the page background.
+export const GROUP_CARD_STYLE: CSSProperties = {
+  marginTop: 5,
+  marginBottom: 5,
+  marginLeft: 8,
+  marginRight: 8,
+  borderRadius: 12,
+  overflow: 'hidden',
+  boxShadow: 'none',
+  border: `1px solid ${theme.tableBorder}`,
+};
+
+// Budgeted and spent amounts read as plain numbers; only the balance is a
+// pill, so the number that matters most stands out. Still a tap target.
+export const PLAIN_AMOUNT_STYLE: CSSProperties = {
+  borderRadius: 16,
+  color: theme.tableText,
+  backgroundColor: 'transparent',
+};
+
 export function getColumnWidth({
   show3Columns = false,
   isSidebar = false,
@@ -57,12 +77,12 @@ export function getColumnWidth({
   isSidebar?: boolean;
   offset?: number;
 } = {}) {
-  // If show3Columns = 35vw | 20vw | 20vw | 20vw,
+  // If show3Columns = 40vw | 19vw | 19vw | 19vw,
   // Else = 45vw | 25vw | 25vw,
   if (!isSidebar) {
-    return show3Columns ? `${20 + offset}vw` : `${25 + offset}vw`;
+    return show3Columns ? `${19 + offset}vw` : `${25 + offset}vw`;
   }
-  return show3Columns ? `${35 + offset}vw` : `${45 + offset}vw`;
+  return show3Columns ? `${40 + offset}vw` : `${45 + offset}vw`;
 }
 
 type ToBudgetProps = {
@@ -76,6 +96,12 @@ function ToBudget({ toBudget, onPress, show3Columns }: ToBudgetProps) {
   const amount = useSheetValue(toBudget) ?? 0;
   const format = useFormat();
   const sidebarColumnWidth = getColumnWidth({ show3Columns, isSidebar: true });
+  const color =
+    amount < 0
+      ? theme.toBudgetNegative
+      : amount > 0
+        ? theme.toBudgetPositive
+        : theme.budgetNumberNeutral;
 
   return (
     <View
@@ -86,61 +112,53 @@ function ToBudget({ toBudget, onPress, show3Columns }: ToBudgetProps) {
         width: sidebarColumnWidth,
       }}
     >
-      <Button variant="bare" onPress={onPress}>
-        <View>
-          <View>
-            <AutoTextSize
-              as={Label}
-              minFontSizePx={6}
-              maxFontSizePx={12}
-              mode="oneline"
-              title={amount < 0 ? t('Overbudgeted') : t('To Budget')}
-              style={{
-                ...(amount < 0 ? styles.smallText : {}),
-                color: theme.formInputText,
-                flexShrink: 0,
-                textAlign: 'left',
-              }}
-            />
-          </View>
+      {/* The money waiting for a job is the most important number here. */}
+      <Button
+        variant="bare"
+        onPress={onPress}
+        aria-label={amount < 0 ? t('Overbudgeted') : t('To Budget')}
+        style={{
+          color,
+          backgroundColor: 'color-mix(in srgb, currentColor 16%, transparent)',
+          borderRadius: 10,
+          padding: '6px 10px',
+          maxWidth: '100%',
+          justifyContent: 'flex-start',
+        }}
+      >
+        <View style={{ alignItems: 'flex-start', minWidth: 0 }}>
+          <Text
+            style={{
+              fontSize: 11,
+              fontWeight: 600,
+              letterSpacing: 0.3,
+              textTransform: 'uppercase',
+              color,
+            }}
+          >
+            {amount < 0 ? t('Overbudgeted') : t('To Budget')}
+          </Text>
           <CellValue binding={toBudget} type="financial">
             {({ type, value }) => (
-              <View>
-                <PrivacyFilter>
-                  <AutoTextSize
-                    key={value}
-                    as={Text}
-                    minFontSizePx={6}
-                    maxFontSizePx={12}
-                    mode="oneline"
-                    style={{
-                      ...styles.tnum,
-                      fontSize: 12,
-                      fontWeight: '700',
-                      color:
-                        amount < 0
-                          ? theme.toBudgetNegative
-                          : amount > 0
-                            ? theme.toBudgetPositive
-                            : theme.budgetNumberNeutral,
-                    }}
-                  >
-                    {format(value, type)}
-                  </AutoTextSize>
-                </PrivacyFilter>
-              </View>
+              <PrivacyFilter>
+                <AutoTextSize
+                  key={value}
+                  as={Text}
+                  minFontSizePx={10}
+                  maxFontSizePx={18}
+                  mode="oneline"
+                  style={{
+                    ...styles.tnum,
+                    fontWeight: 700,
+                    color,
+                  }}
+                >
+                  {format(value, type)}
+                </AutoTextSize>
+              </PrivacyFilter>
             )}
           </CellValue>
         </View>
-        <SvgCheveronRight
-          style={{
-            flexShrink: 0,
-            color: theme.mobileHeaderTextSubdued,
-            marginLeft: 5,
-          }}
-          width={14}
-          height={14}
-        />
       </Button>
     </View>
   );
@@ -509,13 +527,9 @@ function BudgetTableHeader({
         justifyContent: 'space-between',
         alignItems: 'center',
         flexShrink: 0,
-        padding: '10px 15px',
-        paddingLeft: 10,
-        backgroundColor: monthUtils.isCurrentMonth(month)
-          ? theme.budgetHeaderCurrentMonth
-          : theme.budgetHeaderOtherMonth,
-        borderBottomWidth: 1,
-        borderColor: theme.tableBorder,
+        padding: '8px 15px 6px',
+        paddingLeft: 8,
+        backgroundColor: theme.mobilePageBackground,
       }}
     >
       <View

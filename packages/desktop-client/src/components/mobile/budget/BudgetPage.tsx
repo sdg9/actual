@@ -10,7 +10,6 @@ import { GridList, GridListItem } from 'react-aria-components';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { Button } from '@actual-app/components/button';
-import { Card } from '@actual-app/components/card';
 import { AnimatedLoading } from '@actual-app/components/icons/AnimatedLoading';
 import { SvgLogo } from '@actual-app/components/icons/logo';
 import {
@@ -22,7 +21,6 @@ import {
   SvgArrowButtonDown1,
   SvgCalendar,
 } from '@actual-app/components/icons/v2';
-import { styles } from '@actual-app/components/styles';
 import { Text } from '@actual-app/components/text';
 import { theme } from '@actual-app/components/theme';
 import { View } from '@actual-app/components/view';
@@ -62,7 +60,7 @@ import { uncategorizedTransactions } from '#queries';
 import { useDispatch } from '#redux';
 import { envelopeBudget } from '#spreadsheet/bindings';
 
-import { BudgetTable, PILL_STYLE } from './BudgetTable';
+import { BudgetTable } from './BudgetTable';
 
 function isBudgetType(input?: string): input is 'envelope' | 'tracking' {
   return ['envelope', 'tracking'].includes(input);
@@ -559,26 +557,41 @@ function Banners({ month, onBudgetAction }) {
 }
 
 function Banner({ type = 'info', children }) {
+  const accent =
+    type === 'critical'
+      ? theme.errorText
+      : type === 'warning'
+        ? theme.warningText
+        : theme.noticeTextLight;
   return (
-    <Card
+    <View
       style={{
-        height: 50,
-        marginTop: 10,
-        marginBottom: 10,
-        padding: 10,
+        minHeight: 44,
+        margin: '6px 8px 0',
+        padding: '8px 10px 8px 12px',
         justifyContent: 'center',
-        backgroundColor:
-          type === 'critical'
-            ? theme.errorBackground
-            : type === 'warning'
-              ? theme.warningBackground
-              : theme.noticeBackground,
+        borderRadius: 10,
+        borderLeft: `3px solid ${accent}`,
+        // A quiet tint of the status colour instead of a saturated block.
+        backgroundColor: `color-mix(in srgb, ${accent} 14%, ${theme.tableBackground})`,
+        color: theme.tableText,
+        fontSize: 13,
       }}
     >
       {children}
-    </Card>
+    </View>
   );
 }
+
+// Compact action button used inside banners.
+const BANNER_BUTTON_STYLE = {
+  borderRadius: 14,
+  padding: '4px 12px',
+  marginLeft: 10,
+  flexShrink: 0,
+  fontSize: 13,
+  fontWeight: 600,
+};
 
 function UncategorizedTransactionsBanner(props) {
   const navigate = useNavigate();
@@ -632,7 +645,7 @@ function UncategorizedTransactionsBanner(props) {
           </Text>
           <Button
             onPress={() => navigate('/categories/uncategorized')}
-            style={PILL_STYLE}
+            style={BANNER_BUTTON_STYLE}
           >
             <Text>
               <Trans>Categorize</Trans>
@@ -721,7 +734,10 @@ function OverbudgetedBanner({ month, onBudgetAction, ...props }) {
               </Text>
             </View>
           </View>
-          <Button onPress={openCoverOverbudgetedModal} style={PILL_STYLE}>
+          <Button
+            onPress={openCoverOverbudgetedModal}
+            style={BANNER_BUTTON_STYLE}
+          >
             <Trans>Cover</Trans>
           </Button>
         </View>
@@ -873,7 +889,10 @@ function OverspendingBanner({ month, onBudgetAction, budgetType, ...props }) {
               )
             </Trans>
           </Text>
-          <Button onPress={onOpenCategorySelectionModal} style={PILL_STYLE}>
+          <Button
+            onPress={onOpenCategorySelectionModal}
+            style={BANNER_BUTTON_STYLE}
+          >
             {budgetType === 'envelope' && <Trans>Cover</Trans>}
             {budgetType === 'tracking' && <Trans>View</Trans>}
           </Button>
@@ -930,7 +949,7 @@ function MonthSelector({
         }}
         data-month={month}
       >
-        <Text style={styles.underlinedText}>
+        <Text style={{ fontWeight: 600, letterSpacing: 0.2 }}>
           {monthUtils.format(month, "MMMM ''yy", locale)}
         </Text>
       </Button>
