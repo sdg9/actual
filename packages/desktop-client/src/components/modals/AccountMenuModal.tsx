@@ -28,7 +28,9 @@ import { useAccount } from '#hooks/useAccount';
 import { useAccounts } from '#hooks/useAccounts';
 import { useNotes } from '#hooks/useNotes';
 import { useSyncedPref } from '#hooks/useSyncedPref';
+import { pushModal } from '#modals/modalsSlice';
 import type { Modal as ModalType } from '#modals/modalsSlice';
+import { useDispatch } from '#redux';
 
 type AccountMenuModalProps = Extract<
   ModalType,
@@ -238,6 +240,7 @@ function AdditionalAccountMenu({
   });
   const [showBalances] = useSyncedPref(`show-balances-${account.id}`);
   const [hideReconciled] = useSyncedPref(`hide-reconciled-${account.id}`);
+  const dispatch = useDispatch();
 
   return (
     <View>
@@ -277,6 +280,10 @@ function AdditionalAccountMenu({
                     ? t('Hide reconciled transactions')
                     : t('Show reconciled transactions'),
               },
+              {
+                name: 'account-group',
+                text: t('Account group…'),
+              },
               account.closed
                 ? {
                     name: 'reopen',
@@ -305,6 +312,16 @@ function AdditionalAccountMenu({
                   break;
                 case 'toggle-reconciled':
                   onToggleReconciled?.();
+                  break;
+                case 'account-group':
+                  dispatch(
+                    pushModal({
+                      modal: {
+                        name: 'account-groups',
+                        options: { accountId: account.id },
+                      },
+                    }),
+                  );
                   break;
                 default:
                   throw new Error(`Unrecognized menu option: ${String(name)}`);

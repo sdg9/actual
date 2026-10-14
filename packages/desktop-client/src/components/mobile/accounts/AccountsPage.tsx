@@ -22,7 +22,10 @@ import { Text } from '@actual-app/components/text';
 import { TextOneLine } from '@actual-app/components/text-one-line';
 import { theme } from '@actual-app/components/theme';
 import { View } from '@actual-app/components/view';
-import type { AccountEntity } from '@actual-app/core/types/models';
+import type {
+  AccountEntity,
+  AccountGroupEntity,
+} from '@actual-app/core/types/models';
 import { css } from '@emotion/css';
 
 import { useMoveAccountMutation, useSyncAndDownloadMutation } from '#accounts';
@@ -31,7 +34,10 @@ import { makeAmountFullStyle } from '#components/budget/util';
 import { MOBILE_NAV_HEIGHT } from '#components/mobile/MobileNavTabs';
 import { PullToRefresh } from '#components/mobile/PullToRefresh';
 import { MobilePageHeader, Page } from '#components/Page';
+import { SidebarBalance } from '#components/sidebar/redesign/SidebarBalance';
+import { buildAccountSide } from '#components/sidebar/redesign/useSidebarAccountTree';
 import { CellValue, CellValueText } from '#components/spreadsheet/CellValue';
+import { useAccountGroups } from '#hooks/useAccountGroups';
 import { useAccounts } from '#hooks/useAccounts';
 import { useLocalPref } from '#hooks/useLocalPref';
 import { useNavigate } from '#hooks/useNavigate';
@@ -40,7 +46,6 @@ import { replaceModal } from '#modals/modalsSlice';
 import { useDispatch, useSelector } from '#redux';
 import type { Binding, SheetFields } from '#spreadsheet';
 import * as bindings from '#spreadsheet/bindings';
-
 const ROW_HEIGHT = 60;
 
 // Virtual account id for the all-accounts transaction list (/accounts/all)
@@ -313,6 +318,10 @@ function AllAccountList({
     account => account.offbudget === 1 && account.closed === 0,
   );
   const closedAccounts = accounts.filter(account => account.closed === 1);
+  const { data: unsortedGroups = [] } = useAccountGroups();
+  const accountGroups = [...unsortedGroups].sort(
+    (a, b) => a.sort_order - b.sort_order,
+  );
 
   const closedAccountsRef = useRef<HTMLDivElement | null>(null);
   const [showClosedAccounts, setShowClosedAccountsPref] = useLocalPref(
@@ -372,9 +381,11 @@ function AllAccountList({
                 amount={getOnBudgetBalance()}
               />
             )}
-            <AccountList
+            <GroupedAccountList
               aria-label={t('On budget accounts')}
               accounts={onBudgetAccounts}
+              groups={accountGroups}
+              offbudget={false}
               getAccountBalance={getAccountBalance}
               onOpenAccount={onOpenAccount}
             />
@@ -385,9 +396,11 @@ function AllAccountList({
                 amount={getOffBudgetBalance()}
               />
             )}
-            <AccountList
+            <GroupedAccountList
               aria-label={t('Off budget accounts')}
               accounts={offBudgetAccounts}
+              groups={accountGroups}
+              offbudget
               getAccountBalance={getAccountBalance}
               onOpenAccount={onOpenAccount}
             />
@@ -416,6 +429,76 @@ function AllAccountList({
         </PullToRefresh>
       )}
     </Page>
+  );
+}
+
+type GroupedAccountListProps = {
+  'aria-label': string;
+  accounts: AccountEntity[];
+  groups: AccountGroupEntity[];
+  offbudget: boolean;
+  getAccountBalance: (
+    accountId: AccountEntity['id'],
+  ) => Binding<'account', 'balance'>;
+  onOpenAccount: (account: AccountEntity) => void;
+};
+
+// Accounts in user-defined groups (headers with subtotals); accounts without
+// a group come first, as in the desktop sidebar.
+function GroupedAccountList({
+  'aria-label': ariaLabel,
+  accounts,
+  groups,
+  offbudget,
+  getAccountBalance,
+  onOpenAccount,
+}: GroupedAccountListProps) {
+  const { buckets } = buildAccountSide(accounts, groups);
+  return (
+    <View style={{ gap: 6 }}>
+      {buckets.map(({ group, accounts: members }) => (
+        <View key={group?.id ?? 'ungrouped'}>
+          {group && (
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'baseline',
+                justifyContent: 'space-between',
+                padding: '10px 18px 4px',
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 12,
+                  fontWeight: 600,
+                  letterSpacing: 0.4,
+                  textTransform: 'uppercase',
+                  color: theme.pageTextSubdued,
+                }}
+                data-testid="account-group-name"
+              >
+                {group.name}
+              </Text>
+              <SidebarBalance
+                binding={bindings.accountGroupBalance(group.id, offbudget)}
+                style={{
+                  ...styles.tnum,
+                  fontSize: 12,
+                  fontWeight: 600,
+                  color: theme.pageTextSubdued,
+                }}
+              />
+            </View>
+          )}
+          <AccountList
+            aria-label={group ? `${ariaLabel}: ${group.name}` : ariaLabel}
+            accounts={members}
+            getAccountBalance={getAccountBalance}
+            onOpenAccount={onOpenAccount}
+          />
+        </View>
+      ))}
+    </View>
   );
 }
 
