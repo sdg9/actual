@@ -2,7 +2,73 @@
 
 Target: usable content within 1–2 seconds after a tap in Android Chrome.
 
-## Follow-up: reported Android first-use delay
+## Root cause of the Android first-use delay (second pass)
+
+The earlier desktop and CPU-throttled runs could not reproduce the ~17-second
+first opening of Tithing. Real Android Chrome could: an Android 15 emulator
+(Chrome 124, 4 cores, 2 GB) against a private replica of the Mini server
+(latest backup data, exact production bundle `a6bcc9fc5`) took 18–21 s to show
+the budget after a reload and 8–11 s for the first Tithing tap; the second tap
+took 0.5 s.
+
+CPU profiles of the page and both workers showed the main thread idle 88% of
+the time. The loot-core worker spent ~21 s blocked inside SQLite reads waiting
+for absurd-sql's IndexedDB helper: every uncached 4 KB page costs a synchronous
+`Atomics.wait` handshake (about five cross-thread wake-ups) plus an IndexedDB
+`get`. On cold start `loadSpreadsheet` reads the whole `kvcache` table (161,671
+cells, ~25 MB of the 42 MB local file): 12.3 s. The first category screen then
+spent 5.3 s in transaction queries and 2.0 s in other queries, mostly fetching
+pages one by one. That is why the first visit after an update, or after Android
+discards the tab, is slow and later visits are fast (SQLite's page cache is
+warm). Desktop IndexedDB is fast enough to hide this.
+
+A single IndexedDB `getAll` read the entire 42 MB file in ~0.3 s on the same
+emulator, so the cost was the per-block protocol, not storage throughput.
+
+## Fix
+
+`openDatabase` now reads all of the budget file's blocks with one `getAll`
+before SQLite opens it and serves each block to SQLite once
+(`loot-core/src/platform/server/sqlite/blockPrefetch.ts`). Correctness rules:
+
+- Block 0 (header) always comes from IndexedDB. If its change counter differs
+  from the snapshot (another tab or connection wrote), the prefetch is dropped.
+- Blocks written by this connection are evicted; truncation, page-size change
+  and deletion drop everything; unused blocks are released after 5 minutes;
+  files over 96 MB are not prefetched.
+- The read transaction is committed and awaited before SQLite opens. Without
+  that, the transaction stays open while the worker blocks synchronously and
+  absurd-sql's first write lock deadlocks (found during testing: the app hung
+  on "Loading…").
+
+SQLite, sync, storage format and offline behaviour are unchanged.
+
+## Results (Android emulator, interleaved A/B, 5 rounds)
+
+| Measurement                                     |                        `a6bcc9fc5` median (range) | New build median (range) |
+| ----------------------------------------------- | ------------------------------------------------: | -----------------------: |
+| Cold launch, local budget, reload → budget      |                                15.1 s (11.5–20.2) |      **5.4 s** (5.1–5.8) |
+| First Tithing tap after cold launch             |                                   7.5 s (4.4–8.9) |   **0.60 s** (0.53–0.81) |
+| Warm repeat Tithing tap                         |                                0.58 s (0.53–0.76) |   **0.34 s** (0.31–0.47) |
+| First launch after update (SW + caches cleared) | 20.7 s (14.9–21.1), 2 of 5 no budget within 400 s |     **8.4 s** (6.8–11.9) |
+
+Raw nonfinancial timings: [android-results-20261014.json](android-results-20261014.json).
+Profiles after the fix: the worker's IndexedDB wait fell from ~21 s to ~0.6 s;
+the remaining cold launch is JS/wasm startup, the ~1 s bulk read and building
+the 161k-cell spreadsheet.
+
+Limits: an emulator on an M3 host is not Steven's phone. Absolute times differ
+between sessions (earlier single runs: 18–21 s / 8–11 s before, 3.7–4.4 s /
+0.6–0.8 s after). "Update" loads fetch every asset through the slow
+`adb reverse` tunnel, not Cloudflare. The two stalled update loads on the old
+build were not diagnosed. Cold launch (~5 s) still misses the 1–2 s target;
+first-use and repeat taps meet it. Background bank sync was not active on the
+replica (SimpleFIN was linked on the Mini later the same day).
+
+Scripts: [`scripts/android-perf`](../../scripts/android-perf/README.md).
+Architecture comparison: [architecture-options.md](architecture-options.md).
+
+## Earlier follow-up: reported Android first-use delay
 
 After deployment Steven observed roughly 17 seconds opening October 2026 Tithing, then much faster subsequent visits and other interactions. The original interaction sequence opened two menus before category transactions; it therefore did not establish first-use responsiveness. The Android target remains **unverified**.
 

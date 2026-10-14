@@ -1,0 +1,136 @@
+{
+  "date": "2026-10-14",
+  "environment": "Android 15 emulator (arm64, 4 cores, 2 GB), Chrome 124, Apple M3 Pro host; private replica of the household server on localhost via adb reverse",
+  "builds": {
+    "web-a6bcc9fc5": "production before this change",
+    "web-ui": "source fa8146419 (prefetch + UI pass)"
+  },
+  "metrics": {
+    "updateLoadMs": "service worker + caches cleared, reload until budget visible (assets over adb reverse); null = no budget within 400 s or script error",
+    "loadMs": "reload until budget table visible, local budget already stored",
+    "tapToReady": "first category tap after that reload until rows usable",
+    "warm.tapToReady": "second tap, same session"
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "build": "web-a6bcc9fc5",
+      "updateLoadMs": 21057,
+      "loadMs": 19161,
+      "pageLoad": 19171,
+      "clickAt": 19665,
+      "tapToReady": 7723,
+      "warm": {
+        "tapToReady": 762
+      }
+    },
+    {
+      "round": 1,
+      "build": "web-ui",
+      "updateLoadMs": 9075,
+      "loadMs": 5326,
+      "pageLoad": 6247,
+      "clickAt": 6745,
+      "tapToReady": 811,
+      "warm": {
+        "tapToReady": 467
+      }
+    },
+    {
+      "round": 2,
+      "build": "web-a6bcc9fc5",
+      "updateLoadMs": null,
+      "loadMs": 20210,
+      "pageLoad": 20393,
+      "clickAt": 20843,
+      "tapToReady": 8944,
+      "warm": {
+        "tapToReady": 580
+      }
+    },
+    {
+      "round": 2,
+      "build": "web-ui",
+      "updateLoadMs": 7622,
+      "loadMs": 5417,
+      "pageLoad": 6207,
+      "clickAt": 6626,
+      "tapToReady": 598,
+      "warm": {
+        "tapToReady": 359
+      }
+    },
+    {
+      "round": 3,
+      "build": "web-a6bcc9fc5",
+      "updateLoadMs": 20688,
+      "loadMs": 11507,
+      "pageLoad": 11507,
+      "clickAt": 11890,
+      "tapToReady": 4364,
+      "warm": {
+        "tapToReady": 548
+      }
+    },
+    {
+      "round": 3,
+      "build": "web-ui",
+      "updateLoadMs": 8365,
+      "loadMs": 5059,
+      "pageLoad": 5109,
+      "clickAt": 5456,
+      "tapToReady": 580,
+      "warm": {
+        "tapToReady": 314
+      }
+    },
+    {
+      "round": 4,
+      "build": "web-a6bcc9fc5",
+      "updateLoadMs": 14887,
+      "loadMs": 15079,
+      "pageLoad": 15092,
+      "clickAt": 15515,
+      "tapToReady": 7517,
+      "warm": {
+        "tapToReady": 669
+      }
+    },
+    {
+      "round": 4,
+      "build": "web-ui",
+      "updateLoadMs": 11928,
+      "loadMs": 5776,
+      "pageLoad": 5885,
+      "clickAt": 6265,
+      "tapToReady": 712,
+      "warm": {
+        "tapToReady": 315
+      }
+    },
+    {
+      "round": 5,
+      "build": "web-a6bcc9fc5",
+      "updateLoadMs": null,
+      "loadMs": 12203,
+      "pageLoad": 12230,
+      "clickAt": 12660,
+      "tapToReady": 4585,
+      "warm": {
+        "tapToReady": 532
+      }
+    },
+    {
+      "round": 5,
+      "build": "web-ui",
+      "updateLoadMs": 6848,
+      "loadMs": 5656,
+      "pageLoad": 5707,
+      "clickAt": 6047,
+      "tapToReady": 531,
+      "warm": {
+        "tapToReady": 335
+      }
+    }
+  ]
+}
