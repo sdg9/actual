@@ -64,26 +64,38 @@ test('household mobile performance', async ({ browser }) => {
   await new ConfigurationPage(page).importBudget('Actual', fixture);
   await page.getByTestId('budget-table').waitFor({ timeout: 120_000 });
   console.log('benchmark: import ready');
-  // Let the import finish before measuring normal interactions.
-  await page.evaluate(async () => {
-    const cache = window.__TANSTACK_QUERY_CLIENT__.getQueryCache();
-    const starts = new Map<string, number>();
-    cache.subscribe(event => {
-      if (event.type !== 'updated') return;
-      const q = event.query;
-      if (q.state.fetchStatus === 'fetching' && !starts.has(q.queryHash)) {
-        starts.set(q.queryHash, performance.now());
-      }
-      if (q.state.fetchStatus === 'idle' && starts.has(q.queryHash)) {
-        // Query family only: never write IDs, names, amounts, or SQL parameters.
-        window.__householdPerf.queries.push({
-          key: String(q.queryKey[0]),
-          ms: performance.now() - starts.get(q.queryHash)!,
-        });
-        starts.delete(q.queryHash);
-      }
+  const networkKbps = Number(process.env.ACTUAL_PERF_NETWORK_KBPS);
+  if (networkKbps > 0) {
+    await client.send('Network.emulateNetworkConditions', {
+      offline: false,
+      latency: 150,
+      downloadThroughput: (networkKbps * 1000) / 8,
+      uploadThroughput: (networkKbps * 1000) / 8,
     });
-  });
+  }
+  // Let the import finish before measuring normal interactions.
+  async function observeQueries() {
+    await page.evaluate(() => {
+      const cache = window.__TANSTACK_QUERY_CLIENT__.getQueryCache();
+      const starts = new Map<string, number>();
+      cache.subscribe(event => {
+        if (event.type !== 'updated') return;
+        const q = event.query;
+        if (q.state.fetchStatus === 'fetching' && !starts.has(q.queryHash)) {
+          starts.set(q.queryHash, performance.now());
+        }
+        if (q.state.fetchStatus === 'idle' && starts.has(q.queryHash)) {
+          // Query family only: never write IDs, names, amounts, or SQL parameters.
+          window.__householdPerf.queries.push({
+            key: String(q.queryKey[0]),
+            ms: performance.now() - starts.get(q.queryHash)!,
+          });
+          starts.delete(q.queryHash);
+        }
+      });
+    });
+  }
+  await observeQueries();
   const results: {
     name: string;
     rate: number;
@@ -130,6 +142,13 @@ test('household mobile performance', async ({ browser }) => {
         .getByRole('option')
         .first()
         .waitFor();
+      // Don't count a row with pending payee lookup data as usable content.
+      await page.waitForFunction(() => {
+        const query = window.__TANSTACK_QUERY_CLIENT__
+          .getQueryCache()
+          .find({ queryKey: ['payees', 'lists'], exact: true });
+        return query?.state.status === 'success';
+      });
     }
     await page.evaluate(
       () =>
@@ -165,7 +184,11 @@ test('household mobile performance', async ({ browser }) => {
   for (const cpuRate of cpuRates) {
     rate = cpuRate;
     await client.send('Emulation.setCPUThrottlingRate', { rate });
-    for (let repeat = 0; repeat < 5; repeat++) {
+    for (
+      let repeat = 0;
+      repeat < Number(process.env.ACTUAL_PERF_REPEATS ?? 5);
+      repeat++
+    ) {
       await measure(
         'category-menu',
         page.getByTestId('category-name').first(),
@@ -248,7 +271,7 @@ test('household mobile performance', async ({ browser }) => {
       await client.send('Network.setCacheDisabled', {
         cacheDisabled: coldAssets,
       });
-      await page.reload();
+      await page.reload({ waitUntil: 'domcontentloaded', timeout: 120_000 });
       await page.getByTestId('budget-table').waitFor({ timeout: 120_000 });
       await page.evaluate(
         () =>
@@ -264,6 +287,28 @@ test('household mobile performance', async ({ browser }) => {
       const name = coldAssets ? 'uncached-assets-reload' : 'warm-reload';
       results.push({ name, rate, ...timing });
       console.log(`benchmark: ${name} CPU${rate} ${Math.round(timing.ms)}ms`);
+      await observeQueries();
+      // This must be the first interaction after reload. The regular loop
+      // opens menus first, warming dependencies and missing first-use stalls.
+      const spentButtons = page.getByRole('button', {
+        name: /^Show transactions for/,
+      });
+      const activeIndex = await spentButtons.evaluateAll(buttons =>
+        buttons.findIndex(b => /[1-9]/.test(b.textContent || '')),
+      );
+      const firstCategory = process.env.ACTUAL_PERF_CATEGORY
+        ? page.getByRole('button', {
+            name: `Show transactions for ${process.env.ACTUAL_PERF_CATEGORY} category`,
+            exact: true,
+          })
+        : spentButtons.nth(Math.max(activeIndex, 0));
+      await measure(
+        `${name}-first-category-transactions`,
+        firstCategory,
+        page.getByLabel('Transaction list', { exact: true }),
+      );
+      await page.getByRole('button', { name: /Back/ }).first().click();
+      await page.getByTestId('budget-table').waitFor();
     }
   }
   fs.writeFileSync(
@@ -275,7 +320,7 @@ test('household mobile performance', async ({ browser }) => {
   const maxClickMs = Number(process.env.ACTUAL_PERF_MAX_CLICK_MS);
   if (maxClickMs > 0) {
     for (const result of results.filter(
-      result => !result.name.includes('reload'),
+      result => !result.name.endsWith('reload'),
     )) {
       expect(
         result.ms,

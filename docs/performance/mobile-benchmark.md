@@ -2,6 +2,18 @@
 
 Target: usable content within 1–2 seconds after a tap in Android Chrome.
 
+## Follow-up: reported Android first-use delay
+
+After deployment Steven observed roughly 17 seconds opening October 2026 Tithing, then much faster subsequent visits and other interactions. The original interaction sequence opened two menus before category transactions; it therefore did not establish first-use responsiveness. The Android target remains **unverified**.
+
+The harness now opens a category as its first interaction after each reload, waits for transaction rows and payee lookup completion, and includes those samples in the 2-second threshold. Set `ACTUAL_PERF_REPEATS=0` to run only these reload/first-tap cases; `ACTUAL_PERF_CATEGORY` optionally chooses the category by its exact displayed name. `ACTUAL_PERF_NETWORK_KBPS` adds throughput throttling and 150 ms latency after the private import. This remains a serverless copy with service workers blocked, not a reproduction of live bank sync or a PWA update. Local static serving is uncompressed, unlike a potentially compressed production response.
+
+Six exploratory local first-tap samples (warm/uncached assets respectively) measured 133/163 ms at 1×, 336/268 ms at 4×, and 443/467 ms at 6×. A separate live Mini reload via localhost automatically clicked Tithing as soon as its button appeared: click at 2,412 ms after navigation, two rows with loading indicator gone at 3,411 ms. Transaction and payee query completion took roughly 51/58 ms after starting. Those query timings include scheduling and transport, not just SQL. No financial data was edited. These results do not explain the phone's 17-second wait, and no speculative application change was deployed.
+
+An exploratory 1.6 Mbps / 150 ms latency run at 4× CPU opened Tithing in under 0.4 seconds after the tap in both cache modes. The uncompressed local app reload itself took about 66 seconds. This distinguishes slow asset delivery before the budget appears from the reported delay after tapping; it is not a production-network measurement. The initial attempt exceeded the harness's old 20-second navigation timeout; reloads now allow 120 seconds and wait for DOM readiness, followed by budget readiness.
+
+Final harness verification passed all 12 taps at 4× CPU (ten standard interactions plus two cold-first Tithing openings); Tithing measured 203/227 ms. Root typecheck and changed-file formatting/type-aware lint passed. No application source changed in this follow-up.
+
 ## Method
 
 The opt-in `packages/desktop-client/e2e/household-performance.test.ts` imports a private Actual export into a new serverless browser context. The export contains 22,031 transactions, 102 accounts, and 136 months since 2015. It does not connect to the household server or change live financial records. Private exports, CPU profiles, and detailed result JSON stay outside git.

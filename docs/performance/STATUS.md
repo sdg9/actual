@@ -1,7 +1,7 @@
 ---
 project: Actual household mobile performance
 state: active
-milestone: Measured mobile responsiveness improvements deployed to Mini
+milestone: Investigating reported 17-second Android first-use delay
 updated: 2026-10-14
 verify: ssh mini 'curl -fsS http://127.0.0.1:5006/household-build.json'
 ---
@@ -13,11 +13,11 @@ verify: ssh mini 'curl -fsS http://127.0.0.1:5006/household-build.json'
 
 ## Verified
 
-- 150 tap samples pass 2 s threshold at 1×, 4× and 6× CPU; maximum 1.827 s.
-- Return to budget ~20–25% faster; 4× reload ~1.9–2.0 s; 6× reload ~2.7 s.
+- Earlier 150 warm-navigation taps pass 2 s; they missed the reported first-use delay.
+- Cold-first-category benchmark added; six local samples 133–467 ms (1×/4×/6×).
+- Live Mini reload/first Tithing tap ~999 ms in desktop preview; Android cause unresolved.
 - Root typecheck, production build, changed-file lint and independent review pass.
 - 48 mobile/desktop workflows + 38 utility + 7 loader/sheet tests pass.
-- Mini health, web revision, live household render, month navigation and sync verified.
 
 ## Delivered
 
@@ -27,8 +27,8 @@ verify: ssh mini 'curl -fsS http://127.0.0.1:5006/household-build.json'
 
 ## Next actions
 
-- Existing browser/PWA: use **Update now** or reload to activate the new bundle.
-- Further work should profile actual Android hardware and slower startup, if needed.
+- Trace Android post-update first use, including asset loading, worker startup and sync.
+- Do not treat desktop measurements as proof the reported 17-second wait is fixed.
 
 ## Needs Steven
 
@@ -36,4 +36,4 @@ verify: ssh mini 'curl -fsS http://127.0.0.1:5006/household-build.json'
 
 ## Limits
 
-- [Benchmark](mobile-benchmark.md) uses a private copy and CPU-throttled Chromium, not actual Android hardware.
+- [Benchmark](mobile-benchmark.md) uses a private copy and CPU-throttled Chromium, not Android. Follow-up changes only the harness; no new app deployment.
