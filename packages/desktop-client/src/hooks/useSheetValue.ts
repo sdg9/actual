@@ -37,10 +37,23 @@ export function useSheetValue<
   );
 
   const spreadsheet = useSpreadsheet();
-  const [result, setResult] = useState<SheetValueResult<SheetName, FieldName>>({
-    name: fullSheetName,
-    value: memoizedBinding.value ? memoizedBinding.value : null,
-  });
+  function readInitialValue(): SheetValueResult<SheetName, FieldName> {
+    return {
+      name: fullSheetName,
+      value: (spreadsheet.getCached(fullSheetName)?.value ??
+        memoizedBinding.value ??
+        null) as Spreadsheets[SheetName][FieldName] | null,
+    };
+  }
+  const [storedResult, setResult] = useState(readInitialValue);
+  let result = storedResult;
+  // A month switch changes the binding's sheet. Render the new month's cached
+  // value immediately instead of committing the previous month, then correcting
+  // every cell in a synchronous layout-effect render.
+  if (result.name !== fullSheetName) {
+    result = readInitialValue();
+    setResult(result);
+  }
   const latestOnChange = useRef(onChange);
   latestOnChange.current = onChange;
 

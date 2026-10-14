@@ -98,6 +98,33 @@ describe('utility functions', () => {
     expect(looselyParseAmount('1.500 €')).toBe(1500);
   });
 
+  test('reuses number formatters across cells while respecting format and precision', () => {
+    const first = getNumberFormat({
+      format: 'comma-dot',
+      decimalPlaces: 2,
+    }).formatter;
+    expect(
+      getNumberFormat({ format: 'comma-dot', decimalPlaces: 2 }).formatter,
+    ).toBe(first);
+    expect(first.format(1234.567)).toBe('1,234.57');
+    expect(
+      getNumberFormat({
+        format: 'dot-comma',
+        decimalPlaces: 2,
+      }).formatter.format(1234.567),
+    ).toBe('1.234,57');
+    expect(
+      getNumberFormat({
+        format: 'comma-dot',
+        decimalPlaces: 3,
+      }).formatter.format(1234.567),
+    ).toBe('1,234.567');
+    setNumberFormat({ format: 'comma-dot', hideFraction: true });
+    expect(getNumberFormat().formatter.format(-0.1)).toBe('0');
+    expect(getNumberFormat({ decimalPlaces: 2 }).formatter).toBe(first);
+    setNumberFormat({ format: 'comma-dot', hideFraction: false });
+  });
+
   test('number formatting works with comma-dot format', () => {
     setNumberFormat({ format: 'comma-dot', hideFraction: false });
     let formatter = getNumberFormat().formatter;

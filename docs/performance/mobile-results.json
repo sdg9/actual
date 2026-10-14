@@ -1,0 +1,433 @@
+{
+  "method": "mobile Chromium automation click-to-settled; local production bundle; service workers blocked",
+  "viewport": [393, 851],
+  "transactions": 22031,
+  "samplesPerInteractionPerCpu": 5,
+  "baselineSource": "674b783995",
+  "runs": {
+    "baseline": [
+      {
+        "interaction": "category-menu",
+        "cpuRate": 1,
+        "samples": 5,
+        "medianMs": 74,
+        "maxMs": 77
+      },
+      {
+        "interaction": "budget-menu",
+        "cpuRate": 1,
+        "samples": 5,
+        "medianMs": 54,
+        "maxMs": 63
+      },
+      {
+        "interaction": "category-transactions",
+        "cpuRate": 1,
+        "samples": 5,
+        "medianMs": 128,
+        "maxMs": 128
+      },
+      {
+        "interaction": "transaction-editor",
+        "cpuRate": 1,
+        "samples": 5,
+        "medianMs": 190,
+        "maxMs": 199
+      },
+      {
+        "interaction": "return-category-budget",
+        "cpuRate": 1,
+        "samples": 5,
+        "medianMs": 224,
+        "maxMs": 233
+      },
+      {
+        "interaction": "previous-month",
+        "cpuRate": 1,
+        "samples": 5,
+        "medianMs": 283,
+        "maxMs": 298
+      },
+      {
+        "interaction": "next-month",
+        "cpuRate": 1,
+        "samples": 5,
+        "medianMs": 285,
+        "maxMs": 311
+      },
+      {
+        "interaction": "accounts",
+        "cpuRate": 1,
+        "samples": 5,
+        "medianMs": 56,
+        "maxMs": 56
+      },
+      {
+        "interaction": "all-transactions",
+        "cpuRate": 1,
+        "samples": 5,
+        "medianMs": 214,
+        "maxMs": 216
+      },
+      {
+        "interaction": "return-budget",
+        "cpuRate": 1,
+        "samples": 5,
+        "medianMs": 314,
+        "maxMs": 399
+      },
+      {
+        "interaction": "category-menu",
+        "cpuRate": 4,
+        "samples": 5,
+        "medianMs": 209,
+        "maxMs": 250
+      },
+      {
+        "interaction": "budget-menu",
+        "cpuRate": 4,
+        "samples": 5,
+        "medianMs": 163,
+        "maxMs": 173
+      },
+      {
+        "interaction": "category-transactions",
+        "cpuRate": 4,
+        "samples": 5,
+        "medianMs": 166,
+        "maxMs": 201
+      },
+      {
+        "interaction": "transaction-editor",
+        "cpuRate": 4,
+        "samples": 5,
+        "medianMs": 124,
+        "maxMs": 221
+      },
+      {
+        "interaction": "return-category-budget",
+        "cpuRate": 4,
+        "samples": 5,
+        "medianMs": 1003,
+        "maxMs": 1015
+      },
+      {
+        "interaction": "previous-month",
+        "cpuRate": 4,
+        "samples": 5,
+        "medianMs": 1157,
+        "maxMs": 1182
+      },
+      {
+        "interaction": "next-month",
+        "cpuRate": 4,
+        "samples": 5,
+        "medianMs": 1064,
+        "maxMs": 1106
+      },
+      {
+        "interaction": "accounts",
+        "cpuRate": 4,
+        "samples": 5,
+        "medianMs": 161,
+        "maxMs": 164
+      },
+      {
+        "interaction": "all-transactions",
+        "cpuRate": 4,
+        "samples": 5,
+        "medianMs": 184,
+        "maxMs": 204
+      },
+      {
+        "interaction": "return-budget",
+        "cpuRate": 4,
+        "samples": 5,
+        "medianMs": 950,
+        "maxMs": 967
+      },
+      {
+        "interaction": "warm-reload",
+        "cpuRate": 1,
+        "samples": 1,
+        "medianMs": 1141,
+        "maxMs": 1141
+      },
+      {
+        "interaction": "uncached-assets-reload",
+        "cpuRate": 1,
+        "samples": 1,
+        "medianMs": 1138,
+        "maxMs": 1138
+      },
+      {
+        "interaction": "warm-reload",
+        "cpuRate": 4,
+        "samples": 1,
+        "medianMs": 2244,
+        "maxMs": 2244
+      },
+      {
+        "interaction": "uncached-assets-reload",
+        "cpuRate": 4,
+        "samples": 1,
+        "medianMs": 2246,
+        "maxMs": 2246
+      }
+    ],
+    "optimized": [
+      {
+        "interaction": "category-menu",
+        "cpuRate": 1,
+        "samples": 5,
+        "medianMs": 78,
+        "maxMs": 81
+      },
+      {
+        "interaction": "budget-menu",
+        "cpuRate": 1,
+        "samples": 5,
+        "medianMs": 55,
+        "maxMs": 61
+      },
+      {
+        "interaction": "category-transactions",
+        "cpuRate": 1,
+        "samples": 5,
+        "medianMs": 128,
+        "maxMs": 152
+      },
+      {
+        "interaction": "transaction-editor",
+        "cpuRate": 1,
+        "samples": 5,
+        "medianMs": 189,
+        "maxMs": 196
+      },
+      {
+        "interaction": "return-category-budget",
+        "cpuRate": 1,
+        "samples": 5,
+        "medianMs": 182,
+        "maxMs": 190
+      },
+      {
+        "interaction": "previous-month",
+        "cpuRate": 1,
+        "samples": 5,
+        "medianMs": 270,
+        "maxMs": 286
+      },
+      {
+        "interaction": "next-month",
+        "cpuRate": 1,
+        "samples": 5,
+        "medianMs": 292,
+        "maxMs": 295
+      },
+      {
+        "interaction": "accounts",
+        "cpuRate": 1,
+        "samples": 5,
+        "medianMs": 73,
+        "maxMs": 83
+      },
+      {
+        "interaction": "all-transactions",
+        "cpuRate": 1,
+        "samples": 5,
+        "medianMs": 222,
+        "maxMs": 223
+      },
+      {
+        "interaction": "return-budget",
+        "cpuRate": 1,
+        "samples": 5,
+        "medianMs": 290,
+        "maxMs": 306
+      },
+      {
+        "interaction": "category-menu",
+        "cpuRate": 4,
+        "samples": 5,
+        "medianMs": 215,
+        "maxMs": 376
+      },
+      {
+        "interaction": "budget-menu",
+        "cpuRate": 4,
+        "samples": 5,
+        "medianMs": 191,
+        "maxMs": 203
+      },
+      {
+        "interaction": "category-transactions",
+        "cpuRate": 4,
+        "samples": 5,
+        "medianMs": 158,
+        "maxMs": 163
+      },
+      {
+        "interaction": "transaction-editor",
+        "cpuRate": 4,
+        "samples": 5,
+        "medianMs": 129,
+        "maxMs": 224
+      },
+      {
+        "interaction": "return-category-budget",
+        "cpuRate": 4,
+        "samples": 5,
+        "medianMs": 773,
+        "maxMs": 802
+      },
+      {
+        "interaction": "previous-month",
+        "cpuRate": 4,
+        "samples": 5,
+        "medianMs": 1117,
+        "maxMs": 1181
+      },
+      {
+        "interaction": "next-month",
+        "cpuRate": 4,
+        "samples": 5,
+        "medianMs": 1159,
+        "maxMs": 1202
+      },
+      {
+        "interaction": "accounts",
+        "cpuRate": 4,
+        "samples": 5,
+        "medianMs": 173,
+        "maxMs": 183
+      },
+      {
+        "interaction": "all-transactions",
+        "cpuRate": 4,
+        "samples": 5,
+        "medianMs": 193,
+        "maxMs": 211
+      },
+      {
+        "interaction": "return-budget",
+        "cpuRate": 4,
+        "samples": 5,
+        "medianMs": 765,
+        "maxMs": 796
+      },
+      {
+        "interaction": "category-menu",
+        "cpuRate": 6,
+        "samples": 5,
+        "medianMs": 345,
+        "maxMs": 356
+      },
+      {
+        "interaction": "budget-menu",
+        "cpuRate": 6,
+        "samples": 5,
+        "medianMs": 273,
+        "maxMs": 290
+      },
+      {
+        "interaction": "category-transactions",
+        "cpuRate": 6,
+        "samples": 5,
+        "medianMs": 247,
+        "maxMs": 260
+      },
+      {
+        "interaction": "transaction-editor",
+        "cpuRate": 6,
+        "samples": 5,
+        "medianMs": 155,
+        "maxMs": 261
+      },
+      {
+        "interaction": "return-category-budget",
+        "cpuRate": 6,
+        "samples": 5,
+        "medianMs": 1155,
+        "maxMs": 1204
+      },
+      {
+        "interaction": "previous-month",
+        "cpuRate": 6,
+        "samples": 5,
+        "medianMs": 1709,
+        "maxMs": 1812
+      },
+      {
+        "interaction": "next-month",
+        "cpuRate": 6,
+        "samples": 5,
+        "medianMs": 1702,
+        "maxMs": 1827
+      },
+      {
+        "interaction": "accounts",
+        "cpuRate": 6,
+        "samples": 5,
+        "medianMs": 284,
+        "maxMs": 308
+      },
+      {
+        "interaction": "all-transactions",
+        "cpuRate": 6,
+        "samples": 5,
+        "medianMs": 302,
+        "maxMs": 336
+      },
+      {
+        "interaction": "return-budget",
+        "cpuRate": 6,
+        "samples": 5,
+        "medianMs": 1087,
+        "maxMs": 1154
+      },
+      {
+        "interaction": "warm-reload",
+        "cpuRate": 1,
+        "samples": 1,
+        "medianMs": 1038,
+        "maxMs": 1038
+      },
+      {
+        "interaction": "uncached-assets-reload",
+        "cpuRate": 1,
+        "samples": 1,
+        "medianMs": 1015,
+        "maxMs": 1015
+      },
+      {
+        "interaction": "warm-reload",
+        "cpuRate": 4,
+        "samples": 1,
+        "medianMs": 1927,
+        "maxMs": 1927
+      },
+      {
+        "interaction": "uncached-assets-reload",
+        "cpuRate": 4,
+        "samples": 1,
+        "medianMs": 2018,
+        "maxMs": 2018
+      },
+      {
+        "interaction": "warm-reload",
+        "cpuRate": 6,
+        "samples": 1,
+        "medianMs": 2683,
+        "maxMs": 2683
+      },
+      {
+        "interaction": "uncached-assets-reload",
+        "cpuRate": 6,
+        "samples": 1,
+        "medianMs": 2695,
+        "maxMs": 2695
+      }
+    ]
+  }
+}

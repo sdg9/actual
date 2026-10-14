@@ -62,6 +62,12 @@ function makeSpreadsheet() {
       LRUValueCache.set(name, value);
     }
 
+    // Read without changing LRU order during React render. bind() still refreshes
+    // from the worker and subscribes to updates, exactly as before.
+    getCached(name: string): CellCacheValue | undefined {
+      return LRUValueCache.peek(name);
+    }
+
     listen(): () => void {
       return listen('cells-changed', event => {
         if (!observersDisabled) {

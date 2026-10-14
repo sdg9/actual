@@ -10,6 +10,13 @@ import { LazyLoadFailedError } from '@actual-app/core/shared/errors';
 import { retry as promiseRetry } from '@actual-app/core/shared/retry';
 
 type ProplessComponent = ComponentType<Record<string, never>>;
+// Cache code, never budget data. A stable importer identifies each responsive
+// module, so revisiting a route (or a sibling export) needs no loading render.
+const loadedModules = new WeakMap<
+  () => Promise<Record<string, ProplessComponent>>,
+  Record<string, ProplessComponent>
+>();
+
 type LoadComponentProps<K extends string> = {
   name: K;
   message?: string;
@@ -26,22 +33,36 @@ function LoadComponentInner<K extends string>({
   message,
   importer,
 }: LoadComponentProps<K>) {
-  const [Component, setComponent] = useState<ProplessComponent | null>(null);
+  const [loaded, setLoaded] = useState(() => ({
+    importer,
+    Component: loadedModules.get(importer)?.[name] ?? null,
+  }));
+  const Component = loaded.importer === importer ? loaded.Component : null;
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     let isUnmounted = false;
     setError(null);
-    setComponent(null);
+    const cached = loadedModules.get(importer)?.[name];
+    if (cached) {
+      setLoaded(previous =>
+        previous.importer === importer && previous.Component === cached
+          ? previous
+          : { importer, Component: cached },
+      );
+      return;
+    }
+    setLoaded({ importer, Component: null });
 
     // Load the module; if it fails - retry with exponential backoff
     promiseRetry(
       retry =>
         importer()
           .then(module => {
+            loadedModules.set(importer, module);
             // Handle possibly being unmounted while retrying.
             if (!isUnmounted) {
-              setComponent(() => module[name]);
+              setLoaded({ importer, Component: module[name] });
             }
           })
           .catch(retry),
