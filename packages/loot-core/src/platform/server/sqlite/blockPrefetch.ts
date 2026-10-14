@@ -188,7 +188,9 @@ export function installPrefetch(
     }
     // Callers match chunks by position, but keep the requested order anyway.
     const order = new Map(positions.map((pos, i) => [pos, i]));
-    return results.sort((a, b) => order.get(a.pos) - order.get(b.pos));
+    return results.sort(
+      (a, b) => (order.get(a.pos) ?? 0) - (order.get(b.pos) ?? 0),
+    );
   };
 
   ops.writeBlocks = (writes, blockSize) => {

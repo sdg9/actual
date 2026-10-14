@@ -14,17 +14,22 @@ function block(fill: number, counter = 1) {
 
 function fakeFile(disk: Map<number, ArrayBuffer>) {
   const reads: number[] = [];
+  const meta = { size: disk.size * SIZE, blockSize: SIZE };
   const file: PrefetchableFile = {
-    meta: { size: disk.size * SIZE, blockSize: SIZE },
+    meta,
     setattr(attr) {
-      Object.assign(this.meta, attr);
+      Object.assign(meta, attr);
     },
     ops: {
       getStoreName: () => 'test',
       readBlocks(positions, blockSize) {
         return positions.map(pos => {
           reads.push(pos / blockSize);
-          return { pos, data: disk.get(pos / blockSize).slice(0) };
+          const data = disk.get(pos / blockSize);
+          if (!data) {
+            throw new Error(`missing block ${pos / blockSize}`);
+          }
+          return { pos, data: data.slice(0) };
         });
       },
       writeBlocks(writes, blockSize) {
