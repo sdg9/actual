@@ -197,3 +197,12 @@ cp compose.pre-ui-b4efb1327.yaml compose.yaml
 This restores `a6bcc9fc5`. The new release changes how the browser reads its
 local database copy, not the stored format, so rolling back needs no data
 migration. Existing PWAs pick up the release via **Update now** or a reload.
+
+## Progressive mobile budget render release — 2026-10-14
+
+Current image: `actual-household-ui:0fa3b3c8f`; source `0fa3b3c8f`.
+Image ID: `sha256:dbfd5603f141cfd6b0201187fecde946dfda1351db16fe57f12935a5afbcab8f` (arm64).
+Isolated smoke test passed; verified backup `backups/actual-20261014T161253Z.tar.gz`.
+Live check over SSH forwarding: budget (86 rows incl. Take-home pay) and the
+Tithing screen rendered without console errors. Rollback to `b4efb1327`:
+`cp compose.pre-ui-0fa3b3c8f.yaml compose.yaml && /usr/local/bin/docker compose up -d actual`.
