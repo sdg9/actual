@@ -1,7 +1,8 @@
 # Household Actual deployment
 
 Actual 26.10.0 runs on Steven's Mac Mini in Docker. The image is pinned by digest
-as the base of the custom `actual-household-ui:dce00af72` image in `compose.yaml`.
+as the base of the custom `actual-household-ui` image in `compose.yaml`
+(current release: see the newest release section below).
 The sync server is unchanged; the browser bundle is built from this household fork.
 
 ## Locations
@@ -169,3 +170,30 @@ cp compose.pre-perf-a6bcc9fc5.yaml compose.yaml
 This restores the prior household UI image `dce00af72` without restoring or
 replacing budget data. Activate the changed bundle in existing PWAs with
 **Update now** or a reload.
+
+## Storage prefetch and mobile navigation release — 2026-10-14
+
+Current image: `actual-household-ui:b4efb1327`; source `b4efb1327`.
+Image ID: `sha256:3efc857cb2cd65d8db80eb90067a3354ff08633635e644fa4d6d738ed21aa18b` (arm64).
+Base server image and persistent data unchanged. Release files:
+`~/services/actual/ui-releases/b4efb1327/`.
+
+Before switching: an isolated empty-data container passed health, release
+metadata, index bundle and COOP/COEP checks. Verified backup:
+`backups/actual-20261014T151257Z.tar.gz` (includes the SimpleFIN-linked data).
+After switching: health UP, `/household-build.json` reports `b4efb1327`, and a
+fresh headless browser over SSH forwarding downloaded and rendered the live
+household budget (85 category rows) and the Tithing category screen without
+console errors. No live transactions, assignments or settings were changed.
+
+To roll back only this release:
+
+```sh
+cd ~/services/actual
+cp compose.pre-ui-b4efb1327.yaml compose.yaml
+/usr/local/bin/docker compose up -d actual
+```
+
+This restores `a6bcc9fc5`. The new release changes how the browser reads its
+local database copy, not the stored format, so rolling back needs no data
+migration. Existing PWAs pick up the release via **Update now** or a reload.

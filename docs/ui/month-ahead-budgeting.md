@@ -46,3 +46,31 @@ carried from earlier months. No payment or bank transfer is initiated.
 - Existing category-template-context suite verifies percentage calculations,
   category sources, previous-month selection, and template validation.
 - Actual 26.10.0 production household configuration has not been changed here.
+
+## Household check, 2026-10-14 (private replica)
+
+The live household budget is **not yet** set up for this:
+
+- Goal templates are an experimental feature and are off. Enable them in
+  Settings → Experimental features → Goal templates (mobile: Settings →
+  Experimental) before "Overwrite with template" appears.
+- The imported **Income** category mixes paychecks (Marqeta payroll, Ethos
+  Veterinary, Nordstrom) with YNAB reconciliation adjustments and balance
+  corrections. October to date: net Income $1,798.43, paychecks $6,102.27.
+  `10% of previous Income` would therefore tithe on adjustments.
+
+Verified on a private copy of the server, in Android Chrome:
+
+1. Created income category **Take-home pay** and moved September–October
+   payroll, Ethos Veterinary and Nordstrom deposits into it (September total
+   $26,591.66, whose 10% — $2,659.17 — matches October's manual $2,659.10).
+2. Added `#template 10% of previous Take-home pay` to Tithing's notes.
+3. November → Tithing → Budgeted → Actions → Overwrite with template set
+   **$610.23** (10% of October's $6,102.27 so far).
+4. October → To Budget → Budget Summary → **Hold for next month** $6,102.27:
+   October's To Budget fell from $6,517.40 to $415.13 and "For next month"
+   showed −6,102.27, reserving that income for November.
+
+For the live budget, a payee rule (Marqeta payroll / Ethos Veterinary /
+Nordstrom deposits → Take-home pay) keeps future bank-synced paychecks in the
+right category. Re-apply the template after late paychecks arrive.

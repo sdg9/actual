@@ -1,42 +1,40 @@
 ---
 project: Actual Household UI
-state: active
-milestone: YNAB-inspired household UI deployed to Mini
+state: waiting-on-steven
+milestone: Mobile category screen, bottom sheets and visible month-ahead actions deployed
 updated: 2026-10-14
 verify: yarn typecheck
 ---
 
 ## Implemented
 
-- Blue light theme, rounded sidebar navigation, more legible account spacing.
-- Full-width single-month summary; multi-month column alignment retained.
-- Semantic category balance pills, clearer month typography, keyboard-focus visibility for summary controls.
-- Month-ahead and take-home-income guidance in percentage templates and hold controls.
-- Keyboard-accessible summary actions with Enter/Space regression coverage.
-- Existing financial calculations, imports, bank sync, and storage remain unchanged.
+- Category name/Spent open a category screen: Budgeted/Spent/Balance, notes, transactions, More.
+- Phone dialogs are bottom sheets above the keyboard; viewport CSS variables now set.
+- Budget Summary sheet lists Move / Hold for next month / Cover / Reset hold.
 
 ## Verified
 
-- Root typecheck passes; modified TypeScript files pass type-aware lint.
-- Sidebar Account tests: 3 passed. Formatting and diff whitespace checks pass.
-- Desktop light/dark and mobile demo visually inspected.
-- Final desktop budget + mobile automation E2E: 10 passed; template engine: 86 passed.
-- Offscreen month controls inert; focus no longer scrolls the summary strip.
-- Prior mobile envelope/tracking editing and month navigation: 6 passed.
-- Production build passes; two-month alignment checked; live S&S Household downloaded/rendered and sync returned HTTP 200.
+- Mobile + desktop E2E: 58 + 21 + 40 runs pass; new category-screen and summary-actions tests.
+- Android emulator (private replica): assign/restore, hold $6,102.27 for November, and
+  `#template 10% of previous Take-home pay` → November Tithing $610.23 (10% of October).
+- Desktop budget and dialogs render; [decisions](mobile-navigation.md).
 
 ## Delivered
 
-- Isolated branch `feat/ynab-inspired-ui` in `/Users/steven/dev/actual-ynab-ui`.
-- Local built preview: http://localhost:3002 (demo data only).
-- Mini: `actual-household-ui:dce00af72`, server 26.10.0, deployed 2026-10-14.
-- Verified backup `actual-20261014T051148Z.tar.gz`; previous compose retained.
+- Mini: `actual-household-ui:b4efb1327` (with storage prefetch), 2026-10-14.
 
 ## Next actions
 
-- Use live UI at https://budget.stevengoff.dev; reload/update existing PWA.
-- Configure household Take-home pay and Tithing categories using [the workflow](month-ahead-budgeting.md).
+- After Steven's decision below, configure the live budget per [the workflow](month-ahead-budgeting.md).
+- Optional: close YNAB divider pseudo-accounts ("===…===") that clutter Accounts and Bank Sync.
 
 ## Needs Steven
 
-- none
+- Approve live-budget tithing setup: enable Goal templates; add a Take-home pay income
+  category; move payroll/Ethos/Nordstrom deposits there; add the Tithing template.
+  "Income" currently mixes paychecks with reconciliation adjustments (Oct net $1,798 vs $6,102 pay).
+
+## Limits
+
+- Bare digits in amount fields are cents (`2700` → 27.00), as in YNAB.
+- Real-phone usability not observed directly; emulator only.
