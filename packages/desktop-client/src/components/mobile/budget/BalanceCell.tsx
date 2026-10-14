@@ -18,7 +18,7 @@ import { useSyncedPref } from '#hooks/useSyncedPref';
 import type { Binding } from '#spreadsheet';
 import { envelopeBudget, trackingBudget } from '#spreadsheet/bindings';
 
-import { getColumnWidth, PILL_STYLE } from './BudgetTable';
+import { getColumnWidth } from './BudgetTable';
 
 type BalanceCellProps = {
   binding: Binding<
@@ -82,10 +82,18 @@ export function BalanceCell({
       {({ type, value, className: defaultClassName }) => (
         <Button
           variant="bare"
-          style={{
-            ...PILL_STYLE,
-            maxWidth: columnWidth,
-          }}
+          // Tint the pill with the balance's own status colour (positive,
+          // zero, goal warning, overspent), like an envelope's "available".
+          className={cx(
+            defaultClassName,
+            css({
+              borderRadius: 16,
+              maxWidth: columnWidth,
+              fontWeight: 600,
+              backgroundColor:
+                'color-mix(in srgb, currentColor 16%, transparent)',
+            }),
+          )}
           onPress={onPress}
           aria-label={ariaLabel}
         >

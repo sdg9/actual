@@ -214,8 +214,10 @@ export function TransactionList({
                 <Header
                   style={{
                     ...styles.smallText,
-                    backgroundColor: theme.pageBackground,
-                    color: theme.tableHeaderText,
+                    fontSize: 12,
+                    fontWeight: 600,
+                    backgroundColor: theme.mobilePageBackground,
+                    color: theme.pageTextSubdued,
                     display: 'flex',
                     justifyContent: 'center',
                     paddingBottom: 4,

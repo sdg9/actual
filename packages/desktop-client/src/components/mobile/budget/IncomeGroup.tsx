@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@actual-app/components/button';
 import { Card } from '@actual-app/components/card';
 import { SvgExpandArrow } from '@actual-app/components/icons/v0';
-import { SvgCheveronRight } from '@actual-app/components/icons/v1';
 import { Label } from '@actual-app/components/label';
 import { styles } from '@actual-app/components/styles';
 import type { CSSProperties } from '@actual-app/components/styles';
@@ -22,7 +21,7 @@ import { useFormat } from '#hooks/useFormat';
 import { useSyncedPref } from '#hooks/useSyncedPref';
 import { envelopeBudget, trackingBudget } from '#spreadsheet/bindings';
 
-import { getColumnWidth, ROW_HEIGHT } from './BudgetTable';
+import { getColumnWidth, GROUP_CARD_STYLE, ROW_HEIGHT } from './BudgetTable';
 import { IncomeCategoryList } from './IncomeCategoryList';
 
 type IncomeGroupProps = {
@@ -83,7 +82,7 @@ export function IncomeGroup({
         <Label title={t('Received')} style={{ width: columnWidth }} />
       </View>
 
-      <Card style={{ marginTop: 0 }}>
+      <Card style={{ ...GROUP_CARD_STYLE, marginTop: 5 }}>
         <IncomeGroupHeader
           group={categoryGroup}
           month={month}
@@ -214,7 +213,7 @@ function IncomeGroupName({
         >
           <Text
             style={{
-              ...styles.lineClamp(2),
+              ...styles.lineClamp(1),
               width: sidebarColumnWidth,
               textAlign: 'left',
               ...styles.smallText,
@@ -223,11 +222,6 @@ function IncomeGroupName({
           >
             {group.name}
           </Text>
-          <SvgCheveronRight
-            style={{ flexShrink: 0, color: theme.tableTextSubdued }}
-            width={14}
-            height={14}
-          />
         </View>
       </Button>
     </View>

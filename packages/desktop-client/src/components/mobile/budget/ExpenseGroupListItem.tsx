@@ -5,7 +5,6 @@ import { GridListItem } from 'react-aria-components';
 import { Button } from '@actual-app/components/button';
 import { Card } from '@actual-app/components/card';
 import { SvgExpandArrow } from '@actual-app/components/icons/v0';
-import { SvgCheveronRight } from '@actual-app/components/icons/v1';
 import { styles } from '@actual-app/components/styles';
 import type { CSSProperties } from '@actual-app/components/styles';
 import { Text } from '@actual-app/components/text';
@@ -25,7 +24,7 @@ import { useFormat } from '#hooks/useFormat';
 import { useSyncedPref } from '#hooks/useSyncedPref';
 import { envelopeBudget, trackingBudget } from '#spreadsheet/bindings';
 
-import { getColumnWidth, ROW_HEIGHT } from './BudgetTable';
+import { getColumnWidth, GROUP_CARD_STYLE, ROW_HEIGHT } from './BudgetTable';
 import { ExpenseCategoryList } from './ExpenseCategoryList';
 
 type ExpenseGroupListItemProps = ComponentPropsWithoutRef<
@@ -81,12 +80,7 @@ export function ExpenseGroupListItem({
 
   return (
     <GridListItem textValue={categoryGroup.name} {...props}>
-      <Card
-        style={{
-          marginTop: 4,
-          marginBottom: 4,
-        }}
-      >
+      <Card style={GROUP_CARD_STYLE}>
         <ExpenseGroupHeader
           categoryGroup={categoryGroup}
           month={month}
@@ -247,21 +241,17 @@ function ExpenseGroupName({
         >
           <Text
             style={{
-              ...styles.lineClamp(2),
+              ...styles.lineClamp(1),
               width: sidebarColumnWidth,
               textAlign: 'left',
-              ...styles.smallText,
-              fontWeight: '500',
+              fontSize: 13,
+              fontWeight: '600',
+              letterSpacing: 0.2,
             }}
             data-testid="category-group-name"
           >
             {group.name}
           </Text>
-          <SvgCheveronRight
-            style={{ flexShrink: 0, color: theme.tableTextSubdued }}
-            width={14}
-            height={14}
-          />
         </View>
       </Button>
     </View>
