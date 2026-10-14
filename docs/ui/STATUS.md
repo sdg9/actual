@@ -20,6 +20,7 @@ verify: yarn typecheck
 - Android emulator (private replica): assign/restore, hold $6,102.27 for November, and
   `#template 10% of previous Take-home pay` → November Tithing $610.23 (10% of October).
 - Desktop budget and dialogs render; [decisions](mobile-navigation.md).
+- Live: 8 account groups replace 9 closed "===" dividers (backup 20261014T200334Z).
 
 ## Delivered
 
@@ -28,7 +29,6 @@ verify: yarn typecheck
 ## Next actions
 
 - Late October: November → Tithing → Budgeted → Actions → Overwrite with template.
-- Replace "===…===" divider accounts with real account groups once Steven confirms grouping.
 
 ## Needs Steven
 
