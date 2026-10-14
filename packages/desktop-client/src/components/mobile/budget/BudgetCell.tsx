@@ -1,12 +1,9 @@
-import { useCallback } from 'react';
 import type { ComponentPropsWithoutRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '@actual-app/components/button';
 import { styles } from '@actual-app/components/styles';
 import { Text } from '@actual-app/components/text';
-import { send } from '@actual-app/core/platform/client/connection';
-import * as monthUtils from '@actual-app/core/shared/months';
 import type { CategoryEntity } from '@actual-app/core/types/models';
 import { AutoTextSize } from 'auto-text-size';
 
@@ -14,15 +11,11 @@ import { makeAmountGrey } from '#components/budget/util';
 import { PrivacyFilter } from '#components/PrivacyFilter';
 import { CellValue } from '#components/spreadsheet/CellValue';
 import { useFormat } from '#hooks/useFormat';
-import { useLocale } from '#hooks/useLocale';
-import { useNotes } from '#hooks/useNotes';
-import { useSyncedPref } from '#hooks/useSyncedPref';
-import { useUndo } from '#hooks/useUndo';
-import { pushModal } from '#modals/modalsSlice';
-import { useDispatch } from '#redux';
 import type { SheetFields } from '#spreadsheet';
 
 import { getColumnWidth, PILL_STYLE } from './BudgetTable';
+import { useCategoryBudgetMenu } from './useCategoryActions';
+import type { OnBudgetAction } from './useCategoryActions';
 
 type BudgetCellProps<
   SheetFieldName extends SheetFields<'envelope-budget' | 'tracking-budget'>,
@@ -31,7 +24,7 @@ type BudgetCellProps<
 > & {
   category: CategoryEntity;
   month: string;
-  onBudgetAction: (month: string, action: string, args: unknown) => void;
+  onBudgetAction: OnBudgetAction;
 };
 
 export function BudgetCell<
@@ -45,131 +38,13 @@ export function BudgetCell<
   ...props
 }: BudgetCellProps<SheetFieldName>) {
   const { t } = useTranslation();
-  const locale = useLocale();
   const columnWidth = getColumnWidth();
-  const dispatch = useDispatch();
   const format = useFormat();
-  const { showUndoNotification } = useUndo();
-  const [budgetType = 'envelope'] = useSyncedPref('budgetType');
-  const categoryNotes = useNotes(category.id);
-
-  const onSaveNotes = useCallback(async (id: string, notes: string) => {
-    await send('notes-save', { id, note: notes });
-  }, []);
-
-  const onEditNotes = useCallback(
-    (id: string, month: string) => {
-      dispatch(
-        pushModal({
-          modal: {
-            name: 'notes',
-            options: {
-              id,
-              name:
-                category.name +
-                ' - ' +
-                monthUtils.format(month, "MMMM ''yy", locale),
-              onSave: onSaveNotes,
-            },
-          },
-        }),
-      );
-    },
-    [category.name, locale, dispatch, onSaveNotes],
-  );
-
-  const onOpenCategoryBudgetMenu = useCallback(() => {
-    const sharedOptions = {
-      categoryId: category.id,
-      month,
-      onEditNotes,
-      onUpdateBudget: (amount: number) => {
-        onBudgetAction(month, 'budget-amount', {
-          category: category.id,
-          amount,
-        });
-        showUndoNotification({
-          message: `${category.name} budget has been updated to ${format(amount, 'financial')}.`,
-        });
-      },
-      onCopyLastMonthAverage: () => {
-        onBudgetAction(month, 'copy-single-last', {
-          category: category.id,
-        });
-        showUndoNotification({
-          message: `${category.name} budget has been set to last month's budgeted amount.`,
-        });
-      },
-      onSetMonthsAverage: (numberOfMonths: number) => {
-        if (
-          numberOfMonths !== 3 &&
-          numberOfMonths !== 6 &&
-          numberOfMonths !== 12
-        ) {
-          return;
-        }
-        onBudgetAction(month, `set-single-${numberOfMonths}-avg`, {
-          category: category.id,
-        });
-        showUndoNotification({
-          message: `${category.name} budget has been set to ${numberOfMonths === 12 ? 'yearly' : `${numberOfMonths} month`} average.`,
-        });
-      },
-      onApplyBudgetTemplate: () => {
-        onBudgetAction(month, 'apply-single-category-template', {
-          category: category.id,
-        });
-        showUndoNotification({
-          message: `${category.name} budget templates have been applied.`,
-          pre: categoryNotes ?? undefined,
-        });
-      },
-    };
-
-    if (budgetType === 'envelope') {
-      dispatch(
-        pushModal({
-          modal: {
-            name: 'envelope-budget-menu',
-            options: sharedOptions,
-          },
-        }),
-      );
-    } else {
-      dispatch(
-        pushModal({
-          modal: {
-            name: 'tracking-budget-menu',
-            options: {
-              ...sharedOptions,
-              onCopyUntilYearEnd: () => {
-                onBudgetAction(month, 'copy-until-year-end', {
-                  category: category.id,
-                });
-                showUndoNotification({
-                  message: t('{{categoryName}} budget copied until year end.', {
-                    categoryName: category.name,
-                  }),
-                });
-              },
-            },
-          },
-        }),
-      );
-    }
-  }, [
-    budgetType,
-    category.id,
-    category.name,
-    categoryNotes,
-    dispatch,
+  const onOpenCategoryBudgetMenu = useCategoryBudgetMenu({
+    category,
     month,
     onBudgetAction,
-    showUndoNotification,
-    onEditNotes,
-    format,
-    t,
-  ]);
+  });
 
   return (
     <CellValue

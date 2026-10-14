@@ -189,24 +189,26 @@ test('household mobile performance', async ({ browser }) => {
       repeat < Number(process.env.ACTUAL_PERF_REPEATS ?? 5);
       repeat++
     ) {
-      await measure(
-        'category-menu',
-        page.getByTestId('category-name').first(),
-        page.getByTestId('category-menu-modal'),
-      );
-      await page.getByRole('button', { name: 'Close', exact: true }).click();
-      await measure(
-        'budget-menu',
-        page.getByRole('button', { name: /^Open budget menu for/ }).first(),
-        page.getByTestId('envelope-budget-menu-modal'),
-      );
-      await page.getByRole('button', { name: 'Close', exact: true }).click();
       const spentButtons = page.getByRole('button', {
         name: /^Show transactions for/,
       });
       const activeIndex = await spentButtons.evaluateAll(buttons =>
         buttons.findIndex(b => /[1-9]/.test(b.textContent || '')),
       );
+      // Tapping a category name opens its page: summary plus transactions.
+      await measure(
+        'category-page-transactions',
+        page.getByTestId('category-name').nth(Math.max(activeIndex, 0)),
+        page.getByLabel('Transaction list', { exact: true }),
+      );
+      await page.getByRole('button', { name: /Back/ }).first().click();
+      await page.getByTestId('budget-table').waitFor();
+      await measure(
+        'budget-menu',
+        page.getByRole('button', { name: /^Open budget menu for/ }).first(),
+        page.getByTestId('envelope-budget-menu-modal'),
+      );
+      await page.getByRole('button', { name: 'Close', exact: true }).click();
       await measure(
         'category-transactions',
         spentButtons.nth(Math.max(activeIndex, 0)),

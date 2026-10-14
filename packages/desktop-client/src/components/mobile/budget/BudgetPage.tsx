@@ -37,9 +37,7 @@ import {
   useCreateCategoryGroupMutation,
   useCreateCategoryMutation,
   useDeleteCategoryGroupMutation,
-  useDeleteCategoryMutation,
   useSaveCategoryGroupMutation,
-  useSaveCategoryMutation,
   useSortCategoriesMutation,
 } from '#budget';
 import { closeBudget } from '#budgetfiles/budgetfilesSlice';
@@ -48,7 +46,6 @@ import { FinancialText } from '#components/FinancialText';
 import { MobilePageHeader, Page } from '#components/Page';
 import { SyncRefresh } from '#components/SyncRefresh';
 import { useCategories } from '#hooks/useCategories';
-import { useFeatureFlag } from '#hooks/useFeatureFlag';
 import { useFormat } from '#hooks/useFormat';
 import { useLocale } from '#hooks/useLocale';
 import { useLocalPref } from '#hooks/useLocalPref';
@@ -75,15 +72,12 @@ export function BudgetPage() {
   const { t } = useTranslation();
   const locale = useLocale();
   const {
-    data: { list: categories, grouped: categoryGroups } = {
-      list: [],
+    data: { grouped: categoryGroups } = {
       grouped: [],
     },
   } = useCategories();
   const [budgetTypePref] = useSyncedPref('budgetType');
   const budgetType = isBudgetType(budgetTypePref) ? budgetTypePref : 'envelope';
-  const goalTemplatesEnabled = useFeatureFlag('goalTemplatesEnabled');
-  const goalTemplatesUIEnabled = useFeatureFlag('goalTemplatesUIEnabled');
   const spreadsheet = useSpreadsheet();
 
   const currMonth = monthUtils.currentMonth();
@@ -99,10 +93,9 @@ export function BudgetPage() {
   const numberFormat = _numberFormat || 'comma-dot';
   const [hideFraction] = useSyncedPref('hideFraction');
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const applyBudgetAction = useBudgetActions();
   const createCategory = useCreateCategoryMutation();
-  const saveCategory = useSaveCategoryMutation();
-  const deleteCategory = useDeleteCategoryMutation();
   const createCategoryGroup = useCreateCategoryGroupMutation();
   const saveCategoryGroup = useSaveCategoryGroupMutation();
   const deleteCategoryGroup = useDeleteCategoryGroupMutation();
@@ -255,33 +248,6 @@ export function BudgetPage() {
     [categoryGroups, dispatch, onSaveGroup],
   );
 
-  const onSaveCategory = useCallback(
-    category => {
-      saveCategory.mutate({ category });
-    },
-    [saveCategory],
-  );
-
-  const onDeleteCategory = useCallback(
-    categoryId => {
-      dispatch(collapseModals({ rootModalName: 'category-menu' }));
-      deleteCategory.mutate({ id: categoryId });
-    },
-    [deleteCategory, dispatch],
-  );
-
-  const onToggleCategoryVisibility = useCallback(
-    categoryId => {
-      const category = categories.find(c => c.id === categoryId);
-      onSaveCategory({
-        ...category,
-        hidden: category.hidden ? false : true,
-      });
-      dispatch(collapseModals({ rootModalName: 'category-menu' }));
-    },
-    [categories, dispatch, onSaveCategory],
-  );
-
   const onPrevMonth = useCallback(async () => {
     const month = monthUtils.subMonths(startMonth, 1);
     await prewarmMonth(budgetType, spreadsheet, month);
@@ -364,25 +330,6 @@ export function BudgetPage() {
     [categoryGroups, dispatch, onSaveNotes],
   );
 
-  const onOpenCategoryNotesModal = useCallback(
-    id => {
-      const category = categories.find(c => c.id === id);
-      dispatch(
-        pushModal({
-          modal: {
-            name: 'notes',
-            options: {
-              id,
-              name: category.name,
-              onSave: onSaveNotes,
-            },
-          },
-        }),
-      );
-    },
-    [categories, dispatch, onSaveNotes],
-  );
-
   const onOpenCategoryGroupMenuModal = useCallback(
     id => {
       const group = categoryGroups.find(g => g.id === id);
@@ -419,53 +366,12 @@ export function BudgetPage() {
     ],
   );
 
-  const onOpenCategoryMenuModal = useCallback(
-    id => {
-      const category = categories.find(c => c.id === id);
-      const canEditAutomations =
-        goalTemplatesEnabled &&
-        goalTemplatesUIEnabled &&
-        !(category.is_income && budgetType !== 'tracking');
-      dispatch(
-        pushModal({
-          modal: {
-            name: 'category-menu',
-            options: {
-              categoryId: category.id,
-              onSave: onSaveCategory,
-              onEditNotes: onOpenCategoryNotesModal,
-              onDelete: onDeleteCategory,
-              onToggleVisibility: onToggleCategoryVisibility,
-              ...(canEditAutomations && {
-                onEditAutomations: (categoryId: string) => {
-                  dispatch(collapseModals({ rootModalName: 'category-menu' }));
-                  dispatch(
-                    pushModal({
-                      modal: {
-                        name: 'category-automations-edit',
-                        options: { categoryId, month: startMonth },
-                      },
-                    }),
-                  );
-                },
-              }),
-            },
-          },
-        }),
-      );
+  // Category details, notes and actions live on the category's own page.
+  const onOpenCategoryPage = useCallback(
+    (id: string) => {
+      void navigate(`/categories/${id}?month=${startMonth}`);
     },
-    [
-      budgetType,
-      categories,
-      dispatch,
-      goalTemplatesEnabled,
-      goalTemplatesUIEnabled,
-      onDeleteCategory,
-      onOpenCategoryNotesModal,
-      onSaveCategory,
-      onToggleCategoryVisibility,
-      startMonth,
-    ],
+    [navigate, startMonth],
   );
 
   const [showHiddenCategories, setShowHiddenCategoriesPref] = useLocalPref(
@@ -620,7 +526,7 @@ export function BudgetPage() {
                 onBudgetAction={onBudgetAction}
                 onRefresh={onRefresh}
                 onEditCategoryGroup={onOpenCategoryGroupMenuModal}
-                onEditCategory={onOpenCategoryMenuModal}
+                onEditCategory={onOpenCategoryPage}
               />
             </>
           )}

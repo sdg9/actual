@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
+import type { ReactNode } from 'react';
 
 import { q } from '@actual-app/core/shared/query';
 import { isPreviewId } from '@actual-app/core/shared/transactions';
@@ -19,17 +20,23 @@ import * as bindings from '#spreadsheet/bindings';
 type CategoryTransactionsProps = {
   category: CategoryEntity;
   month: string;
+  summary?: ReactNode;
 };
 
 export function CategoryTransactions({
   category,
   month,
+  summary,
 }: CategoryTransactionsProps) {
   const schedulesQuery = useMemo(() => q('schedules').select('*'), []);
 
   return (
     <SchedulesProvider query={schedulesQuery}>
-      <TransactionListWithPreviews category={category} month={month} />
+      <TransactionListWithPreviews
+        category={category}
+        month={month}
+        summary={summary}
+      />
     </SchedulesProvider>
   );
 }
@@ -37,11 +44,13 @@ export function CategoryTransactions({
 type TransactionListWithPreviewsProps = {
   category: CategoryEntity;
   month: string;
+  summary?: ReactNode;
 };
 
 function TransactionListWithPreviews({
   category,
   month,
+  summary,
 }: TransactionListWithPreviewsProps) {
   const navigate = useNavigate();
 
@@ -117,6 +126,7 @@ function TransactionListWithPreviews({
       isLoadingMore={isLoadingMoreTransactions}
       onLoadMore={fetchMoreTransactions}
       onOpenTransaction={onOpenTransaction}
+      summary={summary}
     />
   );
 }

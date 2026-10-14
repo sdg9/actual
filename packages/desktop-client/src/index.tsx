@@ -27,6 +27,7 @@ import { configureAppStore } from './redux/store';
 import * as transactionsSlice from './transactions/transactionsSlice';
 import { redo, undo } from './undo';
 import * as usersSlice from './users/usersSlice';
+import { installVisualViewportVariables } from './visualViewport';
 
 const queryClient = new QueryClient();
 window.__TANSTACK_QUERY_CLIENT__ = queryClient;
@@ -85,6 +86,8 @@ const container = document.getElementById('root');
 if (!container) {
   throw new Error('Root container not found');
 }
+installVisualViewportVariables();
+
 const root = createRoot(container);
 root.render(
   <QueryClientProvider client={queryClient}>

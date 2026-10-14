@@ -287,7 +287,7 @@ budgetTypes.forEach(budgetType => {
       await expect(page).toMatchThemeScreenshots();
     });
 
-    test('checks that clicking the category name opens the category menu modal', async () => {
+    test('checks that the category page opens the category menu modal', async () => {
       const budgetPage = await navigation.goToBudgetPage();
 
       const categoryName = await budgetPage.getCategoryNameForRow(0);
@@ -295,6 +295,44 @@ budgetTypes.forEach(budgetType => {
 
       await expect(categoryMenuModal.heading).toHaveText(categoryName);
       await expect(page).toMatchThemeScreenshots();
+    });
+
+    test('opens a category page with its budget summary and actions', async () => {
+      const budgetPage = await navigation.goToBudgetPage();
+
+      const categoryName = await budgetPage.getCategoryNameForRow(0);
+      await budgetPage.openCategoryPage(categoryName);
+
+      const summary = (label: RegExp) =>
+        page.getByRole('button', { name: label });
+      await expect(
+        summary(new RegExp(`^Edit budgeted amount for ${categoryName}`)),
+      ).toBeVisible();
+      await expect(page.getByText('Spent', { exact: true })).toBeVisible();
+      await expect(
+        page.getByLabel('Transaction list', { exact: true }),
+      ).toBeVisible();
+
+      await summary(
+        new RegExp(`^Edit budgeted amount for ${categoryName}`),
+      ).click();
+      await expect(page.getByTestId(/-budget-menu-modal$/)).toBeVisible();
+      await page.getByRole('button', { name: 'Close', exact: true }).click();
+
+      await summary(
+        new RegExp(`^Move or cover money for ${categoryName}`),
+      ).click();
+      await expect(page.getByTestId(/-balance-menu-modal$/)).toBeVisible();
+      await page.getByRole('button', { name: 'Close', exact: true }).click();
+
+      await page
+        .getByRole('button', { name: `More actions for ${categoryName}` })
+        .click();
+      await expect(page.getByTestId('category-menu-modal')).toBeVisible();
+      await page.getByRole('button', { name: 'Close', exact: true }).click();
+
+      await page.getByRole('button', { name: 'Back', exact: true }).click();
+      await expect(budgetPage.budgetTable).toBeVisible();
     });
 
     test('opens the transfer confirmation when deleting a category group with transactions', async () => {
@@ -449,6 +487,11 @@ budgetTypes.forEach(budgetType => {
         .getByRole('button', { name: 'Save', exact: true })
         .click();
       await expect(automationsModal).toBeHidden();
+      await page.getByRole('button', { name: 'Back', exact: true }).click();
+      await expect(budgetPage.budgetTable).toBeVisible();
+      await expect(
+        page.getByTestId('category-name').filter({ hasText: categoryName }),
+      ).toBeVisible();
 
       const budgetedButton =
         await budgetPage.getButtonForBudgeted(categoryName);

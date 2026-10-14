@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { ComponentProps } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { SvgFilter } from '@actual-app/components/icons/v1';
@@ -89,6 +89,8 @@ type TransactionListWithBalancesProps = {
   isReconciling?: boolean;
   onToggleTransactionCleared?: (transaction: TransactionEntity) => void;
   filtered?: boolean;
+  // Replaces the balance strip above the search box.
+  summary?: ReactNode;
 };
 
 export function TransactionListWithBalances({
@@ -109,6 +111,7 @@ export function TransactionListWithBalances({
   isReconciling = false,
   onToggleTransactionCleared,
   filtered = false,
+  summary,
 }: TransactionListWithBalancesProps) {
   const selectedInst = useSelected('transactions', [...transactions], []);
 
@@ -118,38 +121,40 @@ export function TransactionListWithBalances({
         <View
           style={{
             flexShrink: 0,
-            marginTop: 10,
+            marginTop: summary ? 0 : 10,
           }}
         >
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-evenly',
-            }}
-          >
-            {balanceCleared && balanceUncleared ? (
-              <BalanceWithCleared
-                balance={balance}
-                balanceCleared={balanceCleared}
-                balanceUncleared={balanceUncleared}
-                alwaysShowCleared={isReconciling}
-              />
-            ) : (
-              <>
-                <View style={{ flexBasis: '33%' }} />
-                <Balance balance={balance} />
-                <View
-                  style={{
-                    flexBasis: '33%',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  {filtered && <AppliedFiltersChip />}
-                </View>
-              </>
-            )}
-          </View>
+          {summary ?? (
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-evenly',
+              }}
+            >
+              {balanceCleared && balanceUncleared ? (
+                <BalanceWithCleared
+                  balance={balance}
+                  balanceCleared={balanceCleared}
+                  balanceUncleared={balanceUncleared}
+                  alwaysShowCleared={isReconciling}
+                />
+              ) : (
+                <>
+                  <View style={{ flexBasis: '33%' }} />
+                  <Balance balance={balance} />
+                  <View
+                    style={{
+                      flexBasis: '33%',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    {filtered && <AppliedFiltersChip />}
+                  </View>
+                </>
+              )}
+            </View>
+          )}
           <TransactionSearchInput
             placeholder={searchPlaceholder}
             onSearch={onSearch}

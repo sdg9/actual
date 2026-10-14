@@ -184,9 +184,15 @@ export class MobileBudgetPage {
     });
   }
 
-  async openCategoryMenu(categoryName: string | RegExp) {
+  async openCategoryPage(categoryName: string | RegExp) {
     const categoryButton = await this.#getButtonForCategory(categoryName);
     await categoryButton.click();
+  }
+
+  // Category actions live behind "More" on the category's own page.
+  async openCategoryMenu(categoryName: string | RegExp) {
+    await this.openCategoryPage(categoryName);
+    await this.page.getByRole('button', { name: /^More actions for / }).click();
 
     return new CategoryMenuModal(
       this.page.getByRole('dialog', {
