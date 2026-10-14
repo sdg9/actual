@@ -206,3 +206,9 @@ Isolated smoke test passed; verified backup `backups/actual-20261014T161253Z.tar
 Live check over SSH forwarding: budget (86 rows incl. Take-home pay) and the
 Tithing screen rendered without console errors. Rollback to `b4efb1327`:
 `cp compose.pre-ui-0fa3b3c8f.yaml compose.yaml && /usr/local/bin/docker compose up -d actual`.
+
+## Mobile visual pass release — 2026-10-14
+
+Current image: `actual-household-ui:a406e34e7` (`sha256:ea1cf582a6a18667430483b879cae014bd748ca37320cea9f90487b46a8068e2`).
+Smoke test passed; verified backup `backups/actual-20261014T182312Z.tar.gz`.
+Rollback to `0fa3b3c8f`: `cp compose.pre-ui-a406e34e7.yaml compose.yaml && /usr/local/bin/docker compose up -d actual`.

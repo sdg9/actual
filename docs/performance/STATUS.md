@@ -20,8 +20,8 @@ verify: ssh mini 'curl -fsS http://127.0.0.1:5006/household-build.json'
 
 ## Delivered
 
-- Mini: `actual-household-ui:0fa3b3c8f`, server 26.10.0.
-- Backup `actual-20261014T161253Z.tar.gz`; rollback `compose.pre-ui-0fa3b3c8f.yaml`.
+- Mini: `actual-household-ui:a406e34e7`, server 26.10.0.
+- Backup `actual-20261014T182312Z.tar.gz`; rollback `compose.pre-ui-a406e34e7.yaml`.
 - Details: [benchmark](mobile-benchmark.md), [options](architecture-options.md).
 
 ## Next actions

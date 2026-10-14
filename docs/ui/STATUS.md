@@ -1,7 +1,7 @@
 ---
 project: Actual Household UI
 state: active
-milestone: Mobile category screen, bottom sheets and visible month-ahead actions deployed
+milestone: YNAB-style mobile visual pass (light and dark) deployed
 updated: 2026-10-14
 verify: yarn typecheck
 ---
@@ -11,6 +11,7 @@ verify: yarn typecheck
 - Category name/Spent open a category screen: Budgeted/Spent/Balance, notes, transactions, More.
 - Phone dialogs are bottom sheets above the keyboard; viewport CSS variables now set.
 - Budget Summary sheet lists Move / Hold for next month / Cover / Reset hold.
+- Visual pass: navy dark theme, balance-only pills, To Budget card, compact banners.
 
 ## Verified
 
@@ -21,7 +22,7 @@ verify: yarn typecheck
 
 ## Delivered
 
-- Mini: `actual-household-ui:b4efb1327` (with storage prefetch), 2026-10-14.
+- Mini: `actual-household-ui:a406e34e7`, 2026-10-14.
 
 ## Next actions
 
