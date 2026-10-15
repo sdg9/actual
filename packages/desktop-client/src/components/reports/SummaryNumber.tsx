@@ -12,6 +12,7 @@ import { ReportCardValueSkeleton } from './ReportCardValueSkeleton';
 
 const FONT_SIZE_SCALE_FACTOR = 1.6;
 const CONTAINER_MARGIN = 8;
+const MAX_FONT_SIZE = 36;
 
 type SummaryNumberProps = {
   value: number;
@@ -37,7 +38,7 @@ export function SummaryNumber({
 
   displayAmount += suffix;
 
-  const fontSize = `min(${(FONT_SIZE_SCALE_FACTOR * 100) / displayAmount.length}cqi, calc(100cqb - ${CONTAINER_MARGIN * 2}px))`;
+  const fontSize = `min(${MAX_FONT_SIZE}px, ${(FONT_SIZE_SCALE_FACTOR * 100) / displayAmount.length}cqi, calc(100cqb - ${CONTAINER_MARGIN * 2}px))`;
 
   return (
     <>
@@ -54,7 +55,7 @@ export function SummaryNumber({
                   : t('Positive amount: {{amount}}', { amount: displayAmount })
           }
           style={{
-            alignItems: 'center',
+            alignItems: 'flex-start',
             flexGrow: 1,
             flexShrink: 1,
             width: '100%',
@@ -72,7 +73,10 @@ export function SummaryNumber({
                   : theme.reportsNumberPositive,
           }}
         >
-          <FinancialText aria-hidden="true" style={{ fontSize, lineHeight: 1 }}>
+          <FinancialText
+            aria-hidden="true"
+            style={{ fontSize, fontWeight: 600, lineHeight: 1.2 }}
+          >
             <PrivacyFilter>{displayAmount}</PrivacyFilter>
           </FinancialText>
         </View>

@@ -118,6 +118,8 @@ export function SummaryCard({
             alignItems: 'center',
             flexGrow: 1,
             flexShrink: 1,
+            minHeight: 0,
+            padding: '0 20px 20px',
           }}
         >
           {data ? (

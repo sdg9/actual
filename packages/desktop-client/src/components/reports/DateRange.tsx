@@ -92,5 +92,9 @@ export function DateRange({
     content = d.format(endDate, 'MMMM yyyy', { locale });
   }
 
-  return <Block style={{ color: theme.pageTextSubdued }}>{content}</Block>;
+  return (
+    <Block style={{ color: theme.pageTextLight, lineHeight: 1.5 }}>
+      {content}
+    </Block>
+  );
 }

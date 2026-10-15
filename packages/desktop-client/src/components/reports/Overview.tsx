@@ -763,6 +763,8 @@ export function Overview({ dashboard }: OverviewProps) {
                 gridConfig={{
                   cols: currentBreakpoint === 'desktop' ? 12 : 1,
                   rowHeight: 100,
+                  margin: [16, 16],
+                  containerPadding: [10, 16],
                 }}
                 dragConfig={{
                   enabled: currentBreakpoint === 'desktop' && isEditing,
